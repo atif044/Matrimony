@@ -1,7 +1,10 @@
 const express=require('express');
-const User=require('../Models/User')
-const bcrypt=require('bcrypt')
+const User=require('../Models/User');
+const bcrypt=require('bcrypt');
 const app=express();
+const jwt=require('jsonwebtoken');
+const verifyJwt = require('../Middleware/middleware');
+// const verifyJwt = require('../Middleware/middleware');
 app.post('/signup',async (req,res)=>{
     try {
         const {Name,Email,Password,Gender,DateofBirth}=req.body;
@@ -27,7 +30,10 @@ app.post('/signup',async (req,res)=>{
      res.status(500).json({msg:"Internal Server Error",error})   
     }
 })
-
+const generateAuth=(data)=>{
+        const token=jwt.sign(data,process.env.JWT_SECRET,{expiresIn:'1d'});
+        return token;
+}
 app.post('/login',async(req,res)=>{
         const {Email,Password}=req.body;
         let user=await User.findOne({Email})
@@ -43,7 +49,20 @@ app.post('/login',async(req,res)=>{
             return res.status(403).json({success:false,msg:"You are not approved by admin till now PLease Wait"});
         }
         const {Name,DateofBirth}=user;
+        const data = {
+            user:{
+                id:user.id,
+                Name:Name,
+                DateofBirth:DateofBirth
+            }
+        }
+        console.log(data.user.id)
+        const authToken=generateAuth(data);
+        
+        res.setHeader('Authorization',`Bearer ${authToken}`);
         return res.status(200).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}})
 })
-
+app.post('/verify',verifyJwt,(req,res)=>{
+     res.json("hiiii")
+})
 module.exports=app;
