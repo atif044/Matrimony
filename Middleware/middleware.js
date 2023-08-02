@@ -2,7 +2,6 @@ const jwt=require('jsonwebtoken');
 const express=require('express')
 const verifyJwt=(req,res,next)=>{
     const authToken=req.headers['authorization']
-    console.log(authToken)
     if (!authToken || !authToken.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
