@@ -5,6 +5,9 @@ const app=express();
 const jwt=require('jsonwebtoken');
 const verifyJwt = require('../Middleware/middleware');
 const Profile=require('../Models/profile')
+const multer=require('multer')
+const path=require('path')
+const generateRandomString=require('../Utils/generateRandomString')
 //============================Sign up
 app.post('/signup',async (req,res)=>{
     try {
@@ -79,7 +82,9 @@ app.post('/profile',verifyJwt,async(req,res)=>{
             }
         }
         else{
-            const obj={...req.body,userId:req.data.user.id};
+            let DateofB=new Date(req.data.user.DateofBirth);
+            let Age=(parseInt((Date.now()-DateofB) / (1000 * 60 * 60 * 24 * 365.25)))
+            const obj={...req.body,userId:req.data.user.id,Age:Age};
             
             let updated=await Profile.findOneAndUpdate({userId},obj);
                 if (updated){
@@ -88,5 +93,50 @@ app.post('/profile',verifyJwt,async(req,res)=>{
         }
      }
 })
+//===============Photos Upload=====================
+const fullPath=path.join(process.env.FULLPATH,"/Matrimony/Photos")
 
+const storage=multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, fullPath);
+    },
+    filename: function (req, file, cb) {
+        let d=new Date()
+      const uniqueSuffix =`${generateRandomString(10)}-${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+      const fileExtension = path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix +fileExtension.toLowerCase());
+    },
+})
+const upload = multer({ storage: storage });
+app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
+    let photos=[];
+    req.files.map((obj)=>{
+        photos.push(`${obj.destination}/${obj.filename}`)
+    })
+    const user=await User.findById(req.data.user.id);
+     if(!user){
+        return res.status(404).json({msg:"Invalid Action"})
+     }
+     else{
+        const userId=req.data.user.id;
+        const profile= await Profile.findOne({userId});
+        if(!profile){
+               const created=await Profile.create({userId,photos})
+            if (created){
+                res.status(200).json({msg:"Images Uploaded Successfully"});
+            }
+        }
+        else
+        {
+            let profile=await Profile.findOne({userId});
+             photos= 
+            await profile.updateOne({photos:profile.photos.concat(photos)})
+            let saved=await profile.save()
+            if(saved){
+                res.status(200).json({msg:"Images Uploaded Successfully"})
+            }
+        }
+     }
+
+});
 module.exports=app;
