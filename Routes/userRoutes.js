@@ -2,13 +2,13 @@ const express=require('express');
 const User=require('../Models/User');
 const bcrypt=require('bcrypt');
 const app=express();
-const jwt=require('jsonwebtoken');
+const generateAuth=require('../Utils/generateAuth')
 const verifyJwt = require('../Middleware/middleware');
 const Profile=require('../Models/profile')
 const multer=require('multer')
 const path=require('path')
-const generateRandomString=require('../Utils/generateRandomString')
-//============================Sign up
+const generateRandomString=require('../Utils/generateRandomString');
+//===============================SIGNUP
 app.post('/signup',async (req,res)=>{
     try {
         const {Name,Email,Password,Gender,DateofBirth}=req.body;
@@ -32,12 +32,7 @@ app.post('/signup',async (req,res)=>{
      res.status(500).json({msg:"Internal Server Error",error})   
     }
 })
-//=============auth generator
-const generateAuth=(data)=>{
-        const token=jwt.sign(data,process.env.JWT_SECRET,{expiresIn:'1d'});
-        return token;
-}
-//==============login
+//==============================LOGIN
 app.post('/login',async(req,res)=>{
         const {Email,Password}=req.body;
         let user=await User.findOne({Email})
@@ -57,13 +52,36 @@ app.post('/login',async(req,res)=>{
             user:{
                 id:user.id,
                 Name:Name,
-                DateofBirth:DateofBirth
+                DateofBirth:DateofBirth,
+                isAdmin:user.isAdmin
             }
         }
         const authToken=generateAuth(data);
         res.setHeader('Authorization',`Bearer ${authToken}`);
         return res.status(200).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}})
 })
+// =========================CHANGE PASSWORD
+app.post('/changepwd',verifyJwt,async(req,res)=>{
+    try {
+        let user =await User.findById(req.data.user.id);
+        let {oldPass,newPass}=req.body;
+        const comparison=await bcrypt.compare(oldPass,user.Password);
+        if(!comparison){
+            return res.status(401).json({msg:"Old Password is incorrect"});
+        }
+        const salt=await bcrypt.genSalt(parseInt(process.env.SALT))
+        const hashedPass=await bcrypt.hash(newPass,salt);
+        await user.updateOne({Password:hashedPass});
+        let saved=await user.save();
+        if(saved){
+        return res.status(200).json({msg:"Password Changed Successfully"});
+       }
+    } catch (error) {
+        return res.status(500).json({msg:"Internal Server Error"});
+    }
+
+})
+//=================User all demographic + background details as input
 app.post('/profile',verifyJwt,async(req,res)=>{
       const user=await User.findById(req.data.user.id);
      if(!user){
@@ -93,7 +111,7 @@ app.post('/profile',verifyJwt,async(req,res)=>{
         }
      }
 })
-//===============Photos Upload=====================
+//=============== Users Photos Upload=====================
 const fullPath=path.join(process.env.FULLPATH,"/Matrimony/Photos")
 
 const storage=multer.diskStorage({
@@ -129,8 +147,7 @@ app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
         else
         {
             let profile=await Profile.findOne({userId});
-             photos= 
-            await profile.updateOne({photos:profile.photos.concat(photos)})
+             photos= await profile.updateOne({photos:profile.photos.concat(photos)})
             let saved=await profile.save()
             if(saved){
                 res.status(200).json({msg:"Images Uploaded Successfully"})
@@ -139,4 +156,40 @@ app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
      }
 
 });
+// ==============================Users Specific Images
+app.post('/my_img',verifyJwt,async(req,res)=>{
+    let userId=req.data.user.id;
+    const user=await User.findById(userId);
+    if(!user){
+        return res.status(403).status("Unauthorized Access");
+    }
+    let profile=await Profile.findOne({userId});
+    if(!profile){
+       return res.status(200).json({msg:"No images found"})
+    }
+     return res.status(200).json({images:profile.photos});
+});
+// In this api all User with Opposite Gender details will be shown. For Example
+// Male is logged in he will be able to see all the females detail and vice versa
+app.post('/all_profiles',verifyJwt,async(req,res)=>{
+    const userId=req.data.user.id;
+    const user=await User.findById(userId).select("-Password");
+    if(!user)
+    {
+        return res.status(403).json({msg:"invalid action"});
+    }
+    let gender=user.Gender==="Male"?"Female":"Male"
+    const filteredData= await User.find({Gender:gender}).select("-Password");
+    let allUsers=[];
+    let allUsersData=[];
+    filteredData.map((data)=>{
+        allUsers.push(data._id)
+    })
+    let profile=await Profile.find({ 
+        userId: { $in: allUsers }
+     }).populate("userId","-Password").then((profiles)=>{
+        allUsersData.push(profiles)
+    }).catch((err)=>{throw err})
+     res.json(allUsersData)
+})
 module.exports=app;
