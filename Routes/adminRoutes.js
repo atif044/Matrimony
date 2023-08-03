@@ -5,7 +5,23 @@ const verifyJwt = require('../Middleware/middleware');
 const Profile=require('../Models/profile')
 const multer=require('multer')
 
+//=========================FETCH ALL WHO ARE NOT APPROVED
+app.get('/all_np',verifyJwt,async(req,res)=>{
+    try {
+        let admin=await User.findById(req.data.user.id);
+        if(admin.isAdmin===false){
+            return res.status(403).json({msg:"You are UnAuthorized. You are not admin."})
+        }
+        let user=await User.find({isApproved:false}).select('-Password');
+        if(user){
+            return res.status(200).json(user)
+        }
+        return res.status(200).json({msg:"No User Found"})
 
+    } catch (error) {
+        
+    }
+})
 //=========================TO APPROVE USERS via their ID
 app.post('/approve/:id',verifyJwt,async(req,res)=>{
     try { 
