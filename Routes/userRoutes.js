@@ -8,7 +8,8 @@ const Profile=require('../Models/profile')
 const multer=require('multer')
 const path=require('path')
 const generateRandomString=require('../Utils/generateRandomString');
-//===============================SIGNUP
+const Interest=require('../Models/interest');
+//=============================== SIGNUP
 app.post('/signup',async (req,res)=>{
     try {
         const {Name,Email,Password,Gender,DateofBirth}=req.body;
@@ -32,7 +33,7 @@ app.post('/signup',async (req,res)=>{
      res.status(500).json({msg:"Internal Server Error",error})   
     }
 })
-//==============================LOGIN
+//============================== LOGIN
 app.post('/login',async(req,res)=>{
         const {Email,Password}=req.body;
         let user=await User.findOne({Email})
@@ -60,7 +61,7 @@ app.post('/login',async(req,res)=>{
         res.setHeader('Authorization',`Bearer ${authToken}`);
         return res.status(200).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}})
 })
-// =========================CHANGE PASSWORD
+// ========================= CHANGE PASSWORD
 app.post('/changepwd',verifyJwt,async(req,res)=>{
     try {
         let user =await User.findById(req.data.user.id);
@@ -81,7 +82,7 @@ app.post('/changepwd',verifyJwt,async(req,res)=>{
     }
 
 })
-//=================User all demographic + background details as input
+//================= User all demographic + background details as input
 app.post('/profile',verifyJwt,async(req,res)=>{
       const user=await User.findById(req.data.user.id);
      if(!user){
@@ -112,8 +113,7 @@ app.post('/profile',verifyJwt,async(req,res)=>{
      }
 })
 //=============== Users Photos Upload=====================
-const fullPath=path.join(process.env.FULLPATH,"/Matrimony/Photos")
-
+const fullPath=path.join(process.env.FULLPATH,"/Matrimony/Photos");
 const storage=multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, fullPath);
@@ -156,7 +156,7 @@ app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
      }
 
 });
-// ==============================Users Specific Images
+// ============================== Users Specific Images
 app.post('/my_img',verifyJwt,async(req,res)=>{
     let userId=req.data.user.id;
     const user=await User.findById(userId);
@@ -191,5 +191,65 @@ app.post('/all_profiles',verifyJwt,async(req,res)=>{
         allUsersData.push(profiles)
     }).catch((err)=>{throw err})
      res.json(allUsersData)
-})
+});
+//================================== EXPRESS THE INTEREST
+app.post('/express/:id',verifyJwt,async(req,res)=>{
+    try {
+        const userId=req.data.user.id;
+        const receiver=req.params.id;
+        let interest= await Interest.findOne({Sender:userId,Receiver:receiver});
+        if(!interest){
+            let add=await Interest.create(
+                {
+                    Sender:userId,
+                    Receiver:receiver
+                }
+            );
+            if(add){
+               return  res.status(200).json({msg:"Your interest has been expressed"});
+            }
+        }
+                return res.status(301).json({msg:"You have already expressed for this user"});
+    } catch (error) {
+       return res.status(500).json({msg:"Inrernal Server Error"});
+    }
+});
+// ============================ ALL PERSON INTERESTED IN LOGGED IN USER
+app.get('/my_fans',verifyJwt,async(req,res)=>{
+try {
+    const myFans=await Interest.findOne({Receiver:req.data.user.id}).populate("Sender","-Password");
+    console.log(myFans);
+    res.status(200).json(myFans)
+} catch (error) {
+    return res.status(500).json({msg:"Internal Server Error"});
+}
+});
+// ============================ CONFIRMING THE MATCH
+app.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
+    try {
+        let myFan=await Interest.findOne({Sender:req.params.id});
+        await myFan.updateOne({bothInterested:true});
+        let saved=await myFan.save();
+        if(saved){
+            return res.status(200).json({msg:"Both are interested its a match"});
+        }
+    } catch (error) {
+        res.status(500).json({msg:"Internal Server ERROR"})
+    }
+});
+app.get('/my_match',verifyJwt,async(req,res)=>{
+    try {
+        let myMatch=await Interest.findOne({Receiver:req.data.user.id,bothInterested:true}).populate("Sender","-Password");
+        if(!myMatch){
+            let myMatch2=await Interest.findOne({Sender:req.data.user.id,bothInterested:true}).populate("Receiver","-Password");
+            if(!myMatch2){
+                return res.status(404).json({msg:"No Match Found"});
+            }
+            return res.status(200).json(myMatch2);
+        }
+        return res.status(200).json(myMatch);
+    } catch (error) {
+        res.status(500).json({msg:"Internal Server Error"});
+    }
+});
 module.exports=app;
