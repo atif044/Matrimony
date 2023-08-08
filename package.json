@@ -14,14 +14,8 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-=======
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",

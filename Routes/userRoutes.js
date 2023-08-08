@@ -15,25 +15,11 @@ app.post('/signup',async (req,res)=>{
         const {Name,Email,Password,Gender,DateofBirth}=req.body;
         let DateofB=new Date(DateofBirth);
         if(((Date.now()-DateofB) / (1000 * 60 * 60 * 24 * 365.25))<18){
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             return res.status(403).json({error:"Forbidden User is Under Age"})
         }
         const usr=await User.findOne({Email})
         if(usr){
-            return res.status(400).json({success:false,error:"Email is already registered"});
-=======
->>>>>>> f0c1194 (Backend 70%-80%)
-            return res.status(403).json({message:"Forbidden User is Under Age"})
-        }
-        const usr=await User.findOne({Email})
-        if(usr){
-            return res.status(400).json({success:false,msg:"Email is already registered"});
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
+            return res.status(400).json({success:false,error:"Email is already registered"});   
         }
         const salt=await bcrypt.genSalt(parseInt(process.env.SALT))
          const hashedPass=await bcrypt.hash(Password,salt);
@@ -44,15 +30,9 @@ app.post('/signup',async (req,res)=>{
             res.status(201).json({success:true,msg:"User Created",created})
         }
     } catch (error) {
-<<<<<<< HEAD
+
      res.status(500).json({msg:"Internal Server Error",error})   
-=======
-<<<<<<< HEAD
-     res.status(500).json({error:"Internal Server Error",error})   
-=======
-     res.status(500).json({msg:"Internal Server Error",error})   
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
+
     }
 })
 //============================== LOGIN
@@ -60,36 +40,15 @@ app.post('/login',async(req,res)=>{
         const {Email,Password}=req.body;
         let user=await User.findOne({Email})
         if(!user){
-<<<<<<< HEAD
-            return res.status(400).json({success:false,msg:"Email or Password is Incorrect"});
-=======
-<<<<<<< HEAD
             return res.status(400).json({success:false,error:"Email or Password is Incorrect"});
-=======
-            return res.status(400).json({success:false,msg:"Email or Password is Incorrect"});
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
         }
         let PWDCOMP=await bcrypt.compare(Password,user.Password);
         if(!PWDCOMP)
         {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             return res.status(400).json({success:false,error:"Email or Password is Incorrect"});
         }
         if(user.isApproved===false){
             return res.status(403).json({success:false,error:"You are not approved by admin till now PLease Wait"});
-=======
->>>>>>> f0c1194 (Backend 70%-80%)
-            return res.status(400).json({success:false,msg:"Email or Password is Incorrect"});
-        }
-        if(user.isApproved===false){
-            return res.status(403).json({success:false,msg:"You are not approved by admin till now PLease Wait"});
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
         }
         const {Name,DateofBirth}=user;
         const data = {
@@ -101,11 +60,9 @@ app.post('/login',async(req,res)=>{
             }
         }
         const authToken=generateAuth(data);
-<<<<<<< HEAD
-        res.setHeader('Authorization',`Bearer ${authToken}`);
-        return res.status(200).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}})
-=======
-<<<<<<< HEAD
+
+        
+
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
             
             secure:false,
@@ -114,11 +71,6 @@ app.post('/login',async(req,res)=>{
             sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         }).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}});
-=======
-        res.setHeader('Authorization',`Bearer ${authToken}`);
-        return res.status(200).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}})
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
 })
 // ========================= CHANGE PASSWORD
 app.post('/changepwd',verifyJwt,async(req,res)=>{
@@ -156,7 +108,7 @@ app.post('/profile',verifyJwt,async(req,res)=>{
             const obj={...req.body,userId:req.data.user.id,Age};
             const created=await Profile.create(obj)
             if (created){
-                res.status(200).json({msg:"Successfuly Added the details"});
+               return res.status(200).json({msg:"Successfuly Added the details"});
             }
         }
         else{
@@ -249,7 +201,7 @@ app.post('/all_profiles',verifyJwt,async(req,res)=>{
      }).populate("userId","-Password").then((profiles)=>{
         allUsersData.push(profiles)
     }).catch((err)=>{throw err})
-     res.json(allUsersData)
+     return res.json(allUsersData);
 });
 //================================== EXPRESS THE INTEREST
 app.post('/express/:id',verifyJwt,async(req,res)=>{
@@ -278,7 +230,7 @@ app.get('/my_fans',verifyJwt,async(req,res)=>{
 try {
     const myFans=await Interest.findOne({Receiver:req.data.user.id}).populate("Sender","-Password");
     console.log(myFans);
-    res.status(200).json(myFans)
+    return res.status(200).json(myFans)
 } catch (error) {
     return res.status(500).json({msg:"Internal Server Error"});
 }
@@ -311,9 +263,6 @@ app.get('/my_match',verifyJwt,async(req,res)=>{
         res.status(500).json({msg:"Internal Server Error"});
     }
 });
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 app.post('/logout',verifyJwt,async(req,res)=>{
     try {
         
@@ -326,7 +275,4 @@ app.post('/logout',verifyJwt,async(req,res)=>{
         return res.status(500).json({error:"Internal Server Error"})
     }
 })
-=======
->>>>>>> origin/main
->>>>>>> f0c1194 (Backend 70%-80%)
 module.exports=app;
