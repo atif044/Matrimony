@@ -3,7 +3,7 @@ const express=require('express')
 const verifyJwt=(req,res,next)=>{
 
     const authToken=req.headers['authorization']||req.cookies.Authorization
-    if (!authToken || !authToken.startsWith('Bearer ')) {
+    if (!authToken || !authToken.startsWith('Bearer')) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
       const token=authToken.split(' ')[1]

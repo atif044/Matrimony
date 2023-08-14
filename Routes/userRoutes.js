@@ -1,6 +1,7 @@
 const express=require('express');
 const User=require('../Models/User');
 const bcrypt=require('bcrypt');
+const router=express.Router();
 const app=express();
 const generateAuth=require('../Utils/generateAuth')
 const verifyJwt = require('../Middleware/middleware');
@@ -10,7 +11,7 @@ const path=require('path')
 const generateRandomString=require('../Utils/generateRandomString');
 const Interest=require('../Models/interest');
 //=============================== SIGNUP
-app.post('/signup',async (req,res)=>{
+router.post('/signup',async (req,res)=>{
     try {
         const {Name,Email,Password,Gender,DateofBirth}=req.body;
         let DateofB=new Date(DateofBirth);
@@ -36,7 +37,7 @@ app.post('/signup',async (req,res)=>{
     }
 })
 //============================== LOGIN
-app.post('/login',async(req,res)=>{
+router.post('/login',async(req,res)=>{
         const {Email,Password}=req.body;
         let user=await User.findOne({Email})
         if(!user){
@@ -50,13 +51,14 @@ app.post('/login',async(req,res)=>{
         if(user.isApproved===false){
             return res.status(403).json({success:false,error:"You are not approved by admin till now PLease Wait"});
         }
-        const {Name,DateofBirth}=user;
+        const {Name,DateofBirth,isCompleted}=user;
         const data = {
             user:{
                 id:user.id,
                 Name:Name,
                 DateofBirth:DateofBirth,
-                isAdmin:user.isAdmin
+                isAdmin:user.isAdmin,
+                isCompleted:isCompleted
             }
         }
         const authToken=generateAuth(data);
@@ -67,13 +69,13 @@ app.post('/login',async(req,res)=>{
             
             secure:false,
             maxAge:24 * 60 * 60 * 1000,
-            secure:true,
-            sameSite:'none',
+            // secure:true,
+            // sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         }).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}});
 })
 // ========================= CHANGE PASSWORD
-app.post('/changepwd',verifyJwt,async(req,res)=>{
+router.post('/changepwd',verifyJwt,async(req,res)=>{
     try {
         let user =await User.findById(req.data.user.id);
         let {oldPass,newPass}=req.body;
@@ -94,7 +96,7 @@ app.post('/changepwd',verifyJwt,async(req,res)=>{
 
 })
 //================= User all demographic + background details as input
-app.post('/profile',verifyJwt,async(req,res)=>{
+router.post('/profile',verifyJwt,async(req,res)=>{
       const user=await User.findById(req.data.user.id);
      if(!user){
         return res.status(404).json({msg:"Invalid Action"})
@@ -108,6 +110,7 @@ app.post('/profile',verifyJwt,async(req,res)=>{
             const obj={...req.body,userId:req.data.user.id,Age};
             const created=await Profile.create(obj)
             if (created){
+                const user=await User.findByIdAndUpdate(userId,{isCompleted:true});
                return res.status(200).json({msg:"Successfuly Added the details"});
             }
         }
@@ -124,7 +127,7 @@ app.post('/profile',verifyJwt,async(req,res)=>{
      }
 })
 //=============== Users Photos Upload=====================
-const fullPath=path.join(process.env.FULLPATH,"/Matrimony/Photos");
+const fullPath=path.join(process.env.FULLPATH,"/Matrimony/public/Photos");
 const storage=multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, fullPath);
@@ -137,11 +140,12 @@ const storage=multer.diskStorage({
     },
 })
 const upload = multer({ storage: storage });
-app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
+router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
     let photos=[];
     req.files.map((obj)=>{
-        photos.push(`${obj.destination}/${obj.filename}`)
+        photos.push(`${obj.filename}`)
     })
+    // console.log(req.files)
     const user=await User.findById(req.data.user.id);
      if(!user){
         return res.status(404).json({msg:"Invalid Action"})
@@ -167,8 +171,24 @@ app.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
      }
 
 });
+//========================================Profile Picture
+router.post('/upload_profile_pic',upload.single('image'),verifyJwt,async(req,res)=>{
+    try {
+        console.log(req.file)
+        const user=await User.findByIdAndUpdate(req.data.user.id,{profilePic:req.file.filename});
+        if(user){
+            return res.status(200).json({msg:"Profile Picture Updated"});
+        }
+        return res.status(400).json({error:"Error Uploading Profile Pic"})
+    } catch (error) {
+        console.log("hii",error)
+        res.status(500).json({error:"Internal Server Error"});
+    }
+
+})
+
 // ============================== Users Specific Images
-app.post('/my_img',verifyJwt,async(req,res)=>{
+router.post('/my_img',verifyJwt,async(req,res)=>{
     let userId=req.data.user.id;
     const user=await User.findById(userId);
     if(!user){
@@ -182,7 +202,7 @@ app.post('/my_img',verifyJwt,async(req,res)=>{
 });
 // In this api all User with Opposite Gender details will be shown. For Example
 // Male is logged in he will be able to see all the females detail and vice versa
-app.post('/all_profiles',verifyJwt,async(req,res)=>{
+router.post('/all_profiles',verifyJwt,async(req,res)=>{
     const userId=req.data.user.id;
     const user=await User.findById(userId).select("-Password");
     if(!user)
@@ -204,7 +224,7 @@ app.post('/all_profiles',verifyJwt,async(req,res)=>{
      return res.json(allUsersData);
 });
 //================================== EXPRESS THE INTEREST
-app.post('/express/:id',verifyJwt,async(req,res)=>{
+router.post('/express/:id',verifyJwt,async(req,res)=>{
     try {
         const userId=req.data.user.id;
         const receiver=req.params.id;
@@ -226,7 +246,7 @@ app.post('/express/:id',verifyJwt,async(req,res)=>{
     }
 });
 // ============================ ALL PERSON INTERESTED IN LOGGED IN USER
-app.get('/my_fans',verifyJwt,async(req,res)=>{
+router.get('/my_fans',verifyJwt,async(req,res)=>{
 try {
     const myFans=await Interest.findOne({Receiver:req.data.user.id}).populate("Sender","-Password");
     console.log(myFans);
@@ -236,7 +256,7 @@ try {
 }
 });
 // ============================ CONFIRMING THE MATCH
-app.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
+router.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
     try {
         let myFan=await Interest.findOne({Sender:req.params.id});
         await myFan.updateOne({bothInterested:true});
@@ -248,7 +268,7 @@ app.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
         res.status(500).json({msg:"Internal Server ERROR"})
     }
 });
-app.get('/my_match',verifyJwt,async(req,res)=>{
+router.get('/my_match',verifyJwt,async(req,res)=>{
     try {
         let myMatch=await Interest.findOne({Receiver:req.data.user.id,bothInterested:true}).populate("Sender","-Password");
         if(!myMatch){
@@ -263,7 +283,7 @@ app.get('/my_match',verifyJwt,async(req,res)=>{
         res.status(500).json({msg:"Internal Server Error"});
     }
 });
-app.post('/logout',verifyJwt,async(req,res)=>{
+router.post('/logout',verifyJwt,async(req,res)=>{
     try {
         
        return res.status(200).clearCookie('Authorization',{
@@ -275,4 +295,17 @@ app.post('/logout',verifyJwt,async(req,res)=>{
         return res.status(500).json({error:"Internal Server Error"})
     }
 })
-module.exports=app;
+router.post("/MyProfile",verifyJwt,async(req,res)=>{
+    try {
+        let userId=req.data.user.id;
+        let user = await User.findById(req.data.user.id).select("-Password");
+        if(user.isCompleted){
+            let user1=await Profile.findOne({userId}).populate("userId","-Password");
+            return res.status(200).json(user1)
+        }
+        return res.status(403).json({error:"Please Complete Your Profile first"});
+    } catch (error) {
+        return res.status(500).json({error:"Internal Server Error"});
+    }
+})
+module.exports=router;

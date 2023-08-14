@@ -27,8 +27,8 @@ const AllCards = () => {
       { msOverflowStyle: "none", scrollbarWidth: "none" }
     }>
       {
-        arr.map((el) => {
-          return <Card name={el.name} img={el.img} desc={el.desc} />
+        arr.map((el, i) => {
+          return <Card key={i} name={el.name} img={el.img} desc={el.desc} />
         })
       }
       

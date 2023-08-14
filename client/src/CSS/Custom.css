@@ -8,3 +8,28 @@
 {
   display: none;
 }
+
+.accordion input[type="checkbox"] {
+  display: none;
+}
+.accordion label {
+  cursor: pointer;
+  padding: 1rem;
+  display: block;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
+}
+.accordion label:hover {
+  background-color: #f7fafc;
+}
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+.accordion input[type="checkbox"]:checked  + label {
+  background-color: #f7fafc;
+}
+.accordion input[type="checkbox"]:checked  + label + .accordion-content {
+  max-height: 1000px;
+}

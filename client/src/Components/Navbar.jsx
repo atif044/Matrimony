@@ -1,16 +1,23 @@
 import React,{useContext} from 'react'
+import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import context from '../Context/context.js';
 const Navbar = () => {
+    const Navigate=useNavigate();
     const [navbar, setNavbar] = React.useState(false);
     const {token,logOut}=useContext(context)
     const onClick=async()=>{
             const res=await logOut();
-            console.log(res)
+            if(res?.msg){
+                toast.success(res.msg);
+            }
+            Navigate("/login")
     }
-    const elements=token?["My Match","My Interests","Stalkers"]:["Login","Sign up"]
+    const elements=token?["My Match","My Interests","Stalkers","My Profile"]:["Login","Sign up"]
     return (
     <nav className="w-full  bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow">
+        <div><Toaster reverseOrder={true}/></div>
             <div className="justify-between px-4 mx-auto lg:max-w-7xl md:items-center md:flex md:px-8">
                 <div>
                     <div className="flex items-center justify-between py-5 md:py-5 md:block">
@@ -71,7 +78,7 @@ const Navbar = () => {
                                 )
                             }
                        {token && <li className='text-white font-bold hover:underline cursor-pointer' onClick={onClick}>Logout</li>}
-                        </ul>
+                       </ul>
                     </div>
                 </div>
             </div>

@@ -29,6 +29,14 @@ const userschema= new mongoose.Schema(
         isApproved:{
             type:Boolean,
             default:false
+        },
+        isCompleted:{
+            type:Boolean,
+            default:false
+        },
+        profilePic:{
+            type:String,
+            default:"images-U6Ozv9j9uf-15-7-2023.png"
         }
     }
 )
