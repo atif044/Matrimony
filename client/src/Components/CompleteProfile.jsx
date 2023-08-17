@@ -79,7 +79,7 @@ const onSubmit=async(e)=>{
     <button className='bg-green-400 text-black p-2 ml-1'  onClick={()=>arrayAdder(setHobbiesArr,profile.Hobbies,setProfile,profile,"Hobbies")}
      type='button'>Add</button>
     <label
-      for="Hobbies"
+      htmlFor="Hobbies"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >Hobbies</label>
   </div>
@@ -111,7 +111,7 @@ const onSubmit=async(e)=>{
     />
     <button className='bg-green-400 text-black p-2 ml-1'  onClick={()=>arrayAdder(setInterestArr,profile.Interests,setProfile,profile,"Interests")} type='button'>Add</button>
     <label
-      for="Interests"
+      htmlFor="Interests"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >Interests</label>
   </div>
@@ -143,7 +143,7 @@ const onSubmit=async(e)=>{
       required
     />
     <label
-      for="education"
+      htmlFor="education"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >Education</label>
   </div>
@@ -159,7 +159,7 @@ const onSubmit=async(e)=>{
       required
     />
     <label
-      for="religon"
+      htmlFor="religon"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >Religon</label>
   </div>
@@ -176,7 +176,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="profession"
+        htmlFor="profession"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Profession</label>
     </div>
@@ -192,7 +192,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="nationality"
+        htmlFor="nationality"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Nationality</label>
     </div>
@@ -210,7 +210,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="height"
+        htmlFor="height"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Height in ft</label>
     </div>
@@ -226,7 +226,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="bodyWeight"
+        htmlFor="bodyWeight"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Weight in Kg</label>
     </div>
@@ -244,7 +244,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="complexion"
+        htmlFor="complexion"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Complexion (Fair , Dull etc.) </label>
     </div>
@@ -260,7 +260,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="Siblings"
+        htmlFor="Siblings"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Siblings </label>
     </div>
@@ -280,7 +280,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="fatherStatus"
+        htmlFor="fatherStatus"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Fateher Status (Alive, Deceased etc) </label>
     </div>
@@ -296,7 +296,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="motherStatus"
+        htmlFor="motherStatus"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Mother Status ( Alive Deceased, .etc) </label>
     </div>
@@ -313,7 +313,7 @@ const onSubmit=async(e)=>{
       required
     />
     <label
-      for="address"
+      htmlFor="address"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >Address</label>
   </div>
@@ -330,7 +330,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="city"
+        htmlFor="city"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >City</label>
     </div>
@@ -346,7 +346,7 @@ const onSubmit=async(e)=>{
         required
       />
       <label
-        for="country"
+        htmlFor="country"
         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >Country </label>
     </div>
@@ -364,7 +364,7 @@ const onSubmit=async(e)=>{
       required
     />
     <label
-      for="description"
+      htmlFor="description"
       className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-focus:dark:text-purple-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
       >About Me</label>
   </div>

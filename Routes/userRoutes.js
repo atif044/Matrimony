@@ -181,7 +181,6 @@ router.post('/upload_profile_pic',upload.single('image'),verifyJwt,async(req,res
         }
         return res.status(400).json({error:"Error Uploading Profile Pic"})
     } catch (error) {
-        console.log("hii",error)
         res.status(500).json({error:"Internal Server Error"});
     }
 
@@ -202,7 +201,7 @@ router.post('/my_img',verifyJwt,async(req,res)=>{
 });
 // In this api all User with Opposite Gender details will be shown. For Example
 // Male is logged in he will be able to see all the females detail and vice versa
-router.post('/all_profiles',verifyJwt,async(req,res)=>{
+router.get('/all_profiles',verifyJwt,async(req,res)=>{
     const userId=req.data.user.id;
     const user=await User.findById(userId).select("-Password");
     if(!user)
@@ -210,12 +209,19 @@ router.post('/all_profiles',verifyJwt,async(req,res)=>{
         return res.status(403).json({msg:"invalid action"});
     }
     let gender=user.Gender==="Male"?"Female":"Male"
-    const filteredData= await User.find({Gender:gender}).select("-Password");
+    const filteredData= await User.find({Gender:gender,isCompleted:true}).select("-Password");
     let allUsers=[];
     let allUsersData=[];
+    let interest=[]// if already expressed so we will not show profile again
     filteredData.map((data)=>{
         allUsers.push(data._id)
     })
+    let prof=await Interest.find({Sender:userId,Receiver:{$in:allUsers}});
+    let prof2=await Interest.find({Receiver:userId});
+    prof2.map((data)=>interest.push(data.Sender))
+    prof.map((data)=>interest.push(data.Receiver));
+    console.log(interest)
+allUsers = allUsers.filter(item1 => !interest.some(item2 => item2.equals(item1)));
     let profile=await Profile.find({ 
         userId: { $in: allUsers }
      }).populate("userId","-Password").then((profiles)=>{
@@ -230,6 +236,10 @@ router.post('/express/:id',verifyJwt,async(req,res)=>{
         const receiver=req.params.id;
         let interest= await Interest.findOne({Sender:userId,Receiver:receiver});
         if(!interest){
+         interest=await Interest.findOne({Sender:receiver,Receiver:userId});
+         if(interest){
+            return res.status(400).json({error:"This User already showed interest in you please check"})
+         }
             let add=await Interest.create(
                 {
                     Sender:userId,
@@ -242,15 +252,24 @@ router.post('/express/:id',verifyJwt,async(req,res)=>{
         }
                 return res.status(301).json({msg:"You have already expressed for this user"});
     } catch (error) {
-       return res.status(500).json({msg:"Inrernal Server Error"});
+       return res.status(500).json({error:"Inrernal Server Error"});
     }
 });
 // ============================ ALL PERSON INTERESTED IN LOGGED IN USER
 router.get('/my_fans',verifyJwt,async(req,res)=>{
 try {
-    const myFans=await Interest.findOne({Receiver:req.data.user.id}).populate("Sender","-Password");
-    console.log(myFans);
-    return res.status(200).json(myFans)
+    const myFans=await Interest.find({Receiver:req.data.user.id,bothInterested:false}).populate("Sender","-Password");
+    let allUsers=[];
+    let allUsersData=[];
+    myFans.map((data)=>{
+            allUsers.push(data.Sender._id)
+    });
+    let profile=await Profile.find({ 
+        userId: { $in: allUsers }
+     }).populate("userId","-Password").then((profiles)=>{
+        allUsersData.push(profiles)
+    }).catch((err)=>{throw err})
+    return res.status(200).json(allUsersData)
 } catch (error) {
     return res.status(500).json({msg:"Internal Server Error"});
 }
@@ -265,20 +284,43 @@ router.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
             return res.status(200).json({msg:"Both are interested its a match"});
         }
     } catch (error) {
-        res.status(500).json({msg:"Internal Server ERROR"})
+        res.status(500).json({error:"Internal Server ERROR"})
     }
 });
 router.get('/my_match',verifyJwt,async(req,res)=>{
     try {
-        let myMatch=await Interest.findOne({Receiver:req.data.user.id,bothInterested:true}).populate("Sender","-Password");
-        if(!myMatch){
-            let myMatch2=await Interest.findOne({Sender:req.data.user.id,bothInterested:true}).populate("Receiver","-Password");
-            if(!myMatch2){
+        const allMatchIds=[]
+        const allMatchIds2=[]
+        const allMatchProfiles=[]
+        let myMatch=await Interest.find({Receiver:req.data.user.id,bothInterested:true}).populate("Sender","-Password");
+        let myMatch2=await Interest.find({Sender:req.data.user.id,bothInterested:true}).populate("Receiver","-Password");
+            if(!myMatch2.length===0&&!myMatch===0){
                 return res.status(404).json({msg:"No Match Found"});
             }
-            return res.status(200).json(myMatch2);
+        if(myMatch.length!==0){
+            myMatch.map(val=>allMatchIds.push(val.Sender._id));
+            let profile=await Profile.find({ 
+                userId: { $in: allMatchIds }
+             }).populate("userId","-Password").then((profiles)=>{
+                allMatchProfiles.push(profiles)
+            }).catch((err)=>{
+            console.log(err)
+            })   
         }
-        return res.status(200).json(myMatch);
+        if(myMatch2.length!==0){
+            
+            myMatch2.map(val=>allMatchIds2.push(val.Receiver._id));
+            let profile=await Profile.find({ 
+                userId: { $in: allMatchIds2 }
+             }).populate("userId","-Password").then((profiles)=>{
+                allMatchProfiles.push(profiles)
+            }).catch((err)=>{
+                console.log(err)
+            })   
+            allMatchIds=[];
+        }
+    return res.status(200).json(allMatchProfiles);
+               
     } catch (error) {
         res.status(500).json({msg:"Internal Server Error"});
     }

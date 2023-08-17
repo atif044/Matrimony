@@ -123,10 +123,50 @@ const profilePic=async(file)=>{
   });
   let json=await response.json()
   console.log(json)
-  return json
-
+  return json;
 }
-
+const allProfiles=async()=>{
+  const response=await fetch(`${Lhost}/api/auth/all_profiles`,{
+    method:"GET",
+    credentials:"include"
+  })
+  let json =await response.json();
+  return json;
+}
+const expressInterest=async(id)=>{
+     let response=await fetch(`${Lhost}/api/auth/express/${id}`,{
+      method:"POST",
+      credentials:"include"
+     })
+     const json= await response.json();
+     return json;
+}
+const myAllFans=async()=>{
+  let response=await fetch(`${Lhost}/api/auth/my_fans`,
+  {
+    method:"GET",
+    credentials:"include"
+  });
+  let json=await response.json();
+  return json;
+}
+const confirmMatch=async(id)=>{
+  let response=await fetch(`${Lhost}/api/auth/confirm_match/${id}`,{
+    method:"PUT",
+    credentials:"include"
+   })
+   const json= await response.json();
+   console.log(json)
+   return json;
+}
+const myMatch=async()=>{
+    const response=await fetch(`${Lhost}/api/auth/my_match`,{
+      method:"GET",
+      credentials:"include"
+    })
+    const json=await response.json();
+    return json;
+}
 //  //uSED TO SIGN UP 
 //  const signAcc=async (name,username,email,password)=>
 //  {
@@ -210,7 +250,7 @@ const profilePic=async(file)=>{
 //   return json;
 // }
   return (
-        <context.Provider value={{token,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile}}>
+        <context.Provider value={{token,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles}}>
       {props.children}
     </context.Provider>
   )

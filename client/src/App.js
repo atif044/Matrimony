@@ -8,6 +8,10 @@ Route,Routes } from 'react-router-dom';
 import HeroSection from './Components/HeroSection';
 import Profile from './Components/Profile';
 import CompleteProfile from './Components/CompleteProfile';
+import AllProfiles from './Components/AllProfiles';
+import FullProfile from './Components/FullProfile';
+import MyFans from './Components/MyFans';
+import MyMatch from './Components/MyMatch';
 function App() {
   return (
    <Router>
@@ -19,6 +23,10 @@ function App() {
       <Route exact path='/Sign up' element={<Signup/>}/>
       <Route exact path="/My Profile" element={<Profile/>}/>
       <Route exact path="/CompleteProfile" element={<CompleteProfile/>}/>
+      <Route exact path="/All Profiles" element={<AllProfiles/>}/>
+      <Route exact path="/indPrDet" element={<FullProfile/>}/>
+      <Route exact path="/Stalkers" element={<MyFans/>}/>
+      <Route exact path="/My Match" element={<MyMatch/>}/>
     </Routes>
     </State>
    </Router>

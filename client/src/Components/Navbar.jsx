@@ -8,13 +8,13 @@ const Navbar = () => {
     const [navbar, setNavbar] = React.useState(false);
     const {token,logOut}=useContext(context)
     const onClick=async()=>{
-            const res=await logOut();
+            const res=await logOut();            
             if(res?.msg){
                 toast.success(res.msg);
             }
             Navigate("/login")
     }
-    const elements=token?["My Match","My Interests","Stalkers","My Profile"]:["Login","Sign up"]
+    const elements=token?["All Profiles","My Match","Stalkers","My Profile"]:["Login","Sign up"]
     return (
     <nav className="w-full  bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow">
         <div><Toaster reverseOrder={true}/></div>

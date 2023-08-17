@@ -1,11 +1,10 @@
-import React,{useState,useContext,useEffect} from 'react'
+import React,{useState,useContext} from 'react'
 import toast, { Toaster } from 'react-hot-toast';
-
 import context from '../Context/context'
 import { useNavigate,NavLink } from 'react-router-dom'
 const Login = () => {
   const navigate=useNavigate();
-   const {loginAcc,token}=useContext(context)
+   const {loginAcc}=useContext(context)
     const [credential,setCredential]=useState({Email:"",Password:""})
         const onChange=(e)=>{
         console.log(credential)
@@ -13,12 +12,15 @@ const Login = () => {
     }
 const onSubmit =async(e)=>{
     e.preventDefault();
-    const data=await loginAcc(credential.Email,credential.Password);
+    try{const data=await loginAcc(credential.Email,credential.Password);
     if(data.error){
       toast.error(data.error)
     }
     else if(data.success){
       navigate("/")
+    }}
+    catch(error){
+      toast.error("Server Down")
     }
 }
   return (
@@ -27,10 +29,8 @@ const onSubmit =async(e)=>{
     <section className="py-26 bg-white mb-8">
   <div className="container px-4 mx-auto">
     <div className="max-w-lg mx-auto">
-      <div className="text-center mb-8">
-        <a className="inline-block mx-auto mb-6" href="#">
-          <img src="nigodo-assets/logo-icon-nigodo.svg" alt=""/>
-        </a>
+      <div className="text-center mt-8 mb-8">
+        
         <h2 className="text-3xl md:text-4xl font-extrabold mb-2">Login</h2>
           </div>
       <form onSubmit={onSubmit}>
@@ -61,4 +61,4 @@ const onSubmit =async(e)=>{
 </>
   )
 }
-export default Login
+export default Login;

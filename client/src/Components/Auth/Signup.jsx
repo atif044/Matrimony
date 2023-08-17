@@ -1,5 +1,4 @@
 import React,{useState,useContext} from 'react'
-import hero from "../../images/hero.png"
 import DatePicker from 'react-date-picker'
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -35,15 +34,13 @@ const Signup = () => {
     <section className="py-26 bg-white mb-8">
   <div className="container px-4 mx-auto">
     <div className="max-w-lg mx-auto">
-      <div className="text-center mb-8">
-        <a className="inline-block mx-auto mb-6" href="#">
-          <img src="nigodo-assets/logo-icon-nigodo.svg" alt=""/>
-        </a>
+      <div className="text-center mb-8 mt-4">
+
         <h2 className="text-3xl md:text-4xl font-extrabold mb-2">Sign Up</h2>
           </div>
       <form onSubmit={onSubmit}>
         <div className="mb-6">
-          <label className="block mb-2 font-extrabold" for="">Name</label>
+          <label className="block mb-2 font-extrabold" htmlFor="">Name</label>
           <input 
           name="Name"
           value={credential.Name}
@@ -51,7 +48,7 @@ const Signup = () => {
           className="inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded" type="text" placeholder="Name"/>
         </div>
         <div className="mb-6">
-          <label className="block mb-2 font-extrabold" for="">Email</label>
+          <label className="block mb-2 font-extrabold" htmlFor="">Email</label>
           <input
           name="Email"
           value={credential.Email}
@@ -59,7 +56,7 @@ const Signup = () => {
            className="inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded" type="email" placeholder="email"/>
         </div>
         <div className="mb-6">
-          <label className="block mb-2 font-extrabold" for="">Password</label>
+          <label className="block mb-2 font-extrabold" htmlFor="">Password</label>
           <input
           name="Password"
           value={credential.Password}
@@ -67,7 +64,7 @@ const Signup = () => {
            className="inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded" type="password" placeholder="**********"/>
         </div>
         <div className="mb-6">
-          <label className="block mb-2 font-extrabold " for="">Gender</label>
+          <label className="block mb-2 font-extrabold " htmlFor="">Gender</label>
           <select
           name="Gender"
           value={credential.Gender}
@@ -78,7 +75,7 @@ const Signup = () => {
           </select>
         </div>
         <div className="mb-6">
-          <label className="block mb-2 font-extrabold" for="">Date of Birth</label>
+          <label className="block mb-2 font-extrabold" htmlFor="">Date of Birth</label>
           <DatePicker className='text-black bg-inherit inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded' showIcon value={startDate} onChange={setStartDate}/>
         </div>
         <button
