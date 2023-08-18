@@ -6,7 +6,7 @@ import context from '../Context/context.js';
 const Navbar = () => {
     const Navigate=useNavigate();
     const [navbar, setNavbar] = React.useState(false);
-    const {token,logOut}=useContext(context)
+    const {token,logOut,typeAdmin}=useContext(context)
     const onClick=async()=>{
             const res=await logOut();            
             if(res?.msg){
@@ -14,7 +14,8 @@ const Navbar = () => {
             }
             Navigate("/login")
     }
-    const elements=token?["All Profiles","My Match","Stalkers","My Profile"]:["Login","Sign up"]
+    let elements2=token?["All Profiles","My Match","Stalkers","My Profile"]:["Login","Sign up"]
+    let elements=typeAdmin==="true"?["Un Approved Users","All Profiles","My Match","Stalkers","My Profile"]:elements2
     return (
     <nav className="w-full  bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow">
         <div><Toaster reverseOrder={true}/></div>

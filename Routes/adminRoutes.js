@@ -8,12 +8,14 @@ const multer=require('multer')
 //=========================FETCH ALL WHO ARE NOT APPROVED
 app.get('/all_np',verifyJwt,async(req,res)=>{
     try {
+        let allUsersId=[]
+        let allUsers=[]
         let admin=await User.findById(req.data.user.id);
         if(admin.isAdmin===false){
             return res.status(403).json({msg:"You are UnAuthorized. You are not admin."})
         }
         let user=await User.find({isApproved:false}).select('-Password');
-        if(user){
+        if(user.length!==0){
             return res.status(200).json(user)
         }
         return res.status(200).json({msg:"No User Found"})
@@ -26,8 +28,9 @@ app.get('/all_np',verifyJwt,async(req,res)=>{
 app.post('/approve/:id',verifyJwt,async(req,res)=>{
     try { 
         let admin=await User.findById(req.data.user.id);
+        console.log(2)
     if(admin.isAdmin===false){
-        return res.status(403).json({msg:"You are UnAuthorized. You are not admin."})
+        return res.status(403).json({error:"You are UnAuthorized. You are not admin."})
     }
     let id=req.params.id;
     let user=await User.findById(id);
@@ -38,7 +41,7 @@ app.post('/approve/:id',verifyJwt,async(req,res)=>{
             return res.status(200).json({msg:"User has been approved to login"});
         }
     }
-    return res.status(200).json({msg:"This User is already approved"})
+    return res.status(200).json({error:"This User is already approved"})
     } catch (error) {
         
     }

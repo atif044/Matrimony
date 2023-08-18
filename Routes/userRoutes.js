@@ -51,7 +51,7 @@ router.post('/login',async(req,res)=>{
         if(user.isApproved===false){
             return res.status(403).json({success:false,error:"You are not approved by admin till now PLease Wait"});
         }
-        const {Name,DateofBirth,isCompleted}=user;
+        const {Name,DateofBirth,isCompleted,isAdmin}=user;
         const data = {
             user:{
                 id:user.id,
@@ -64,7 +64,13 @@ router.post('/login',async(req,res)=>{
         const authToken=generateAuth(data);
 
         
-
+        res.cookie("typeAdmin",isAdmin,{
+            secure:false,
+            maxAge:24 * 60 * 60 * 1000,
+            // secure:true,
+            // sameSite:'none',
+            expires:new Date(Date.now()+24 * 60 * 60 * 1000)
+        })
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
             
             secure:false,
@@ -72,7 +78,7 @@ router.post('/login',async(req,res)=>{
             // secure:true,
             // sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
-        }).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth}});
+        }).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth,isAdmin}});
 })
 // ========================= CHANGE PASSWORD
 router.post('/changepwd',verifyJwt,async(req,res)=>{
@@ -328,6 +334,9 @@ router.get('/my_match',verifyJwt,async(req,res)=>{
 router.post('/logout',verifyJwt,async(req,res)=>{
     try {
         
+        res.clearCookie('typeAdmin',{
+            path:'/'
+        })
        return res.status(200).clearCookie('Authorization',{
                     
             path:'/'

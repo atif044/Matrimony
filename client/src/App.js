@@ -12,6 +12,7 @@ import AllProfiles from './Components/AllProfiles';
 import FullProfile from './Components/FullProfile';
 import MyFans from './Components/MyFans';
 import MyMatch from './Components/MyMatch';
+import AllUsersNp from './Components/admin/AllUsersNp';
 function App() {
   return (
    <Router>
@@ -27,6 +28,7 @@ function App() {
       <Route exact path="/indPrDet" element={<FullProfile/>}/>
       <Route exact path="/Stalkers" element={<MyFans/>}/>
       <Route exact path="/My Match" element={<MyMatch/>}/>
+      <Route exact path="/Un Approved Users" element={<AllUsersNp/>}/>
     </Routes>
     </State>
    </Router>

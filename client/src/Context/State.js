@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { useState,useEffect} from "react";
 const NoteState = (props) => {
     const[token,setToken]=useState(Cookies.get("Authorization"));
+    const[typeAdmin,settypeAdmin]=useState(Cookies.get("typeAdmin"));
     const [profile,setProfile]=useState(null);
     useEffect(() => {
   
@@ -31,6 +32,7 @@ const NoteState = (props) => {
          const json=await response.json();
          if(json.success){
           setToken(Cookies.get('Authorization'))
+          settypeAdmin(Cookies.get('typeAdmin'));
          }
          return json;
  }
@@ -61,6 +63,7 @@ const logOut=async()=>{
   if(json.success){
     setToken(Cookies.get("Authorization"));
     setProfile(null);
+    settypeAdmin(Cookies.get("typeAdmin"));
   }
   return json
 }
@@ -167,92 +170,31 @@ const myMatch=async()=>{
     const json=await response.json();
     return json;
 }
-//  //uSED TO SIGN UP 
-//  const signAcc=async (name,username,email,password)=>
-//  {
-//      const response = await fetch(`${Lhost}/api/auth/createuser`,{
-//          method: 'POST',
-//           headers: {
-//            'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({name,username,email,password})
-//          });
-//      const json=await response.json();
-//      return json;
-//  }
 
-//   const getDetails=async()=>
-//   {
-//     const response = await fetch(`${Lhost}/api/auth/getuser`,{
-//       method: 'POST',
-//        headers: {
-//         'Content-Type': 'application/json',
-//         'auth-token': localStorage.getItem('token')
-//        },
-//       });
-//   const json=await response.json();
-//   return json;
-//   }
-  
+const allunApproved=async()=>{
+  const response= await fetch(`${Lhost}/api/auth/admin/all_np`,{
+    method:"GET",
+    credentials:"include"
+  });
+  const json = await response.json()
+  return json;
+}
 
-//   const getUsers=async()=>
-//   {
-//     const response = await fetch(`${Lhost}/api/auth/getusers`,{
-//       method: 'GET',
-//        headers: {
-//         'Content-Type': 'application/json',
-//         'auth-token': localStorage.getItem('token')
+const approveId=async(id)=>{
+  let response=await fetch(`${Lhost}/api/auth/admin/approve/${id}`,{
+    method:"POST",
+    credentials:"include"
+   })
+   const json= await response.json();
+   console.log(json)
+   return json;
+}
 
-//        },
-//       });
-//   const json=await response.json();
-//   return json;
-//   }
-//   const ChangePwd=async(oldPwd,newPwd)=>
-//   {
-//     const response = await fetch(`${Lhost}/api/auth/changepwd`,{
-//       method: 'POST',
-//        headers: {
-//         'Content-Type': 'application/json',
-//         'auth-token': localStorage.getItem('token')
-//        },
-//        body: JSON.stringify({oldPwd,newPwd})
-//       });
-//   const json=await response.json();
-//   return json;
-//   }
-// const changeNiche=async(newNiche)=>
-// {
-//   const response=await fetch(`${Lhost}/api/auth/changeniche`,
-//   {
-//     method:'POST',
-//     headers:{
-//       'Content-Type': 'application/json',
-//         'auth-token': localStorage.getItem('token')
-//     },
-//     body:JSON.stringify({newNiche})
-//   });
-//   const json=await response.json();
-//   return json;
-// }
-// const changeEmail=async(newEmail)=>
-// {
-//   const response=await fetch(`${Lhost}/api/auth/changeemail`,
-//   {
-//     method:'POST',
-//     headers:{
-//       'Content-Type': 'application/json',
-//         'auth-token': localStorage.getItem('token')
-//     },
-//     body:JSON.stringify({newEmail})
-//   });
-//   const json=await response.json();
-//   return json;
-// }
   return (
-        <context.Provider value={{token,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles}}>
+        <context.Provider value={{token,typeAdmin,approveId,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles,allunApproved}}>
       {props.children}
     </context.Provider>
   )
 }
+
 export default NoteState;

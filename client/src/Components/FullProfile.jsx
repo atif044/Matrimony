@@ -59,10 +59,7 @@ const FullProfile = () => {
                     <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button> 
                         </div>:
                         (largeObject.match===false||undefined)||(largeObject.fan===true||undefined)?<button className="text-white py-2 px-4 uppercase rounded bg-green-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={confMatch}>Accept</button>:
-                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button> 
-                        
-                        
-                     
+                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button>   
                     }
                 </div>
                   </div>

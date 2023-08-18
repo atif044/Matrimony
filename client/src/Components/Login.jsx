@@ -17,6 +17,9 @@ const onSubmit =async(e)=>{
       toast.error(data.error)
     }
     else if(data.success){
+      if(data?.Details?.isAdmin===true){
+        return navigate('/Un Approved Users')
+      }
       navigate("/")
     }}
     catch(error){
