@@ -9,6 +9,7 @@ const auth=require('./Routes/userRoutes')
 const adminAuth=require('./Routes/adminRoutes')
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+app.options('*',cors())
 app.use(cookieParser())
 db();
 app.use('/api/auth', auth);

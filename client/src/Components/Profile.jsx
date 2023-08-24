@@ -1,11 +1,14 @@
 import React,{useContext, useEffect,useRef,useState} from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import  {toast, Toaster } from 'react-hot-toast';
 import "../CSS/Custom.css"
 import context from '../Context/context'
 import { NavLink } from 'react-router-dom';
+import {Puff} from 'react-loader-spinner';
+import Utils from './Utils';
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from 'react-icons/bs'
 const Profile = () => {
     const {myProfile,profile,photoUpdate,profilePic}=useContext(context)
+    const [loading, setLoading] = useState(true);
     const ScrollRef=useRef();
     const [dp,setDp]=useState("");
     const clickRef=useRef();
@@ -24,10 +27,16 @@ const Profile = () => {
     useEffect(
         ()=>{
         let fetchData=async()=>{
-            let err = await myProfile();
-            if (err) {
-              toast.error(err);
-            }}
+            try {
+                let res = await myProfile();
+                if (res?.err) {
+                 return toast.error(res.err);
+                }
+                setLoading(false)
+            } catch (error) {
+                toast.error("Server Down")
+            }
+            }
         fetchData();
         // eslint-disable-next-line
     },[])
@@ -55,6 +64,12 @@ const Profile = () => {
     <>
     <div><Toaster reverseOrder={true}/></div>
       {
+        loading?<div className='flex justify-center items-center'>
+        <Puff
+          color="#00BFFF"
+          height={100}
+          width={100}/>
+          </div>:
         profile!==null? 
                <div class="bg-gray-100">
     <div class="container mx-auto py-8">
@@ -62,7 +77,7 @@ const Profile = () => {
             <div class="col-span-4 sm:col-span-3">
                 <div class="bg-white shadow rounded-lg p-6">
                     <div class="flex flex-col items-center">
-                        <img src={`http://localhost:5000/${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>
+                        <img src={`${Utils.link}/${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>
                         <h1 class="text-xl font-bold">{profile?.profile?.userId?.Name}</h1>
                         <p class="text-gray-600">{profile?.profile?.profession}</p>
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">

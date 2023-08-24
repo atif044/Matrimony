@@ -51,7 +51,6 @@ const signUp=async(Name,Email,Password,Gender,DateofBirth)=>{
   return json;
 } 
 const logOut=async()=>{
-  console.log(token)
   const response=await fetch(`${Lhost}/api/auth/logout`,{
     method:'POST',
     credentials:"include",
@@ -91,12 +90,10 @@ const detailUpdate=async(details)=>{
     return json;
 }
 const photoUpdate=async(files)=>{
-  console.log(files)
   const formData=new FormData();
   files.forEach((image,index) => {
     formData.append('images', image,image.name);
   });
-  console.log(formData)
   let response=await fetch(`${Lhost}/api/auth/upload_img`,
   {
     method:"POST",
@@ -107,7 +104,6 @@ const photoUpdate=async(files)=>{
     body:formData
   });
   let json=await response.json()
-  console.log(json)
   return json
 
 }
@@ -125,7 +121,6 @@ const profilePic=async(file)=>{
     body:formData
   });
   let json=await response.json()
-  console.log(json)
   return json;
 }
 const allProfiles=async()=>{
@@ -159,7 +154,6 @@ const confirmMatch=async(id)=>{
     credentials:"include"
    })
    const json= await response.json();
-   console.log(json)
    return json;
 }
 const myMatch=async()=>{
@@ -186,7 +180,6 @@ const approveId=async(id)=>{
     credentials:"include"
    })
    const json= await response.json();
-   console.log(json)
    return json;
 }
 

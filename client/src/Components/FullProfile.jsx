@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from 'react-icons/bs'
 import context from '../Context/context'
 import toast, { Toaster } from 'react-hot-toast';
+import Utils from './Utils';
+
 const FullProfile = () => {
     const {expressInterest,confirmMatch}=useContext(context)
     const location = useLocation();
@@ -21,7 +23,6 @@ const FullProfile = () => {
         }
       }
       const expressInterests=async()=>{
-        console.log(largeObject)
             let res=await expressInterest(largeObject.userId._id)
             if(res?.error){
                 return toast.error(res.error);
@@ -31,12 +32,18 @@ const FullProfile = () => {
             }
       }
     const confMatch=async()=>{
-        let res=await confirmMatch(largeObject.userId._id);
-        if(res?.error){
-            toast.error(res.error)
+        try{
+
+            let res=await confirmMatch(largeObject.userId._id);
+            if(res?.error){
+                toast.error(res.error)
+            }
+            else if (res?.msg){
+                toast.success(res.msg)
+            }
         }
-        else if (res?.msg){
-            toast.success(res.msg)
+        catch(error){
+            return toast.error("Server Error")
         }
     }
     return (
@@ -46,7 +53,7 @@ const FullProfile = () => {
             <div className="grid grid-cols-1 md:grid-cols-3">
                 <div className="relative">
                     <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                        <img src={`http://localhost:5000/${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}>
+                        <img src={`${Utils.link}/${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}>
 
                         </img>
                     </div>

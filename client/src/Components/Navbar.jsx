@@ -8,11 +8,16 @@ const Navbar = () => {
     const [navbar, setNavbar] = React.useState(false);
     const {token,logOut,typeAdmin}=useContext(context)
     const onClick=async()=>{
+        try {
+        
             const res=await logOut();            
             if(res?.msg){
                 toast.success(res.msg);
             }
             Navigate("/login")
+    } catch (error) {
+        toast.error("Srever Down")
+    }
     }
     let elements2=token?["All Profiles","My Match","Stalkers","My Profile"]:["Login","Sign up"]
     let elements=typeAdmin==="true"?["Un Approved Users","All Profiles","My Match","Stalkers","My Profile"]:elements2

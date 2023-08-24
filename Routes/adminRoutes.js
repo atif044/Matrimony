@@ -28,7 +28,6 @@ app.get('/all_np',verifyJwt,async(req,res)=>{
 app.post('/approve/:id',verifyJwt,async(req,res)=>{
     try { 
         let admin=await User.findById(req.data.user.id);
-        console.log(2)
     if(admin.isAdmin===false){
         return res.status(403).json({error:"You are UnAuthorized. You are not admin."})
     }

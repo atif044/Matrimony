@@ -54,11 +54,16 @@ const onSubmit=async(e)=>{
     bodyWeight:profile.bodyWeight,
     complexion:profile.complexion
   }
-  let res=await detailUpdate(details);
-  if(res.msg){
-    toast.success(res.msg)
+  try {
+    
+    let res=await detailUpdate(details);
+    if(res.msg){
+      toast.success(res.msg)
+    }
+  } catch (error) {
+    return toast.error("Server Error")
   }
-  console.log(res)
+  
 }
   return (
     <>   

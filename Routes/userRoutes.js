@@ -64,6 +64,13 @@ router.post('/login',async(req,res)=>{
         const authToken=generateAuth(data);
 
         
+        res.cookie("icCompleted",isCompleted,{
+            secure:false,
+            maxAge:24 * 60 * 60 * 1000,
+            // secure:true,
+            // sameSite:'none',
+            expires:new Date(Date.now()+24 * 60 * 60 * 1000)
+        })
         res.cookie("typeAdmin",isAdmin,{
             secure:false,
             maxAge:24 * 60 * 60 * 1000,
@@ -151,7 +158,6 @@ router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
     req.files.map((obj)=>{
         photos.push(`${obj.filename}`)
     })
-    // console.log(req.files)
     const user=await User.findById(req.data.user.id);
      if(!user){
         return res.status(404).json({msg:"Invalid Action"})
@@ -180,7 +186,6 @@ router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
 //========================================Profile Picture
 router.post('/upload_profile_pic',upload.single('image'),verifyJwt,async(req,res)=>{
     try {
-        console.log(req.file)
         const user=await User.findByIdAndUpdate(req.data.user.id,{profilePic:req.file.filename});
         if(user){
             return res.status(200).json({msg:"Profile Picture Updated"});
@@ -214,6 +219,9 @@ router.get('/all_profiles',verifyJwt,async(req,res)=>{
     {
         return res.status(403).json({msg:"invalid action"});
     }
+    if(!user.isCompleted){
+        return res.status(404).json({error:"Please Complete Your Profile First"})
+    }
     let gender=user.Gender==="Male"?"Female":"Male"
     const filteredData= await User.find({Gender:gender,isCompleted:true}).select("-Password");
     let allUsers=[];
@@ -226,8 +234,7 @@ router.get('/all_profiles',verifyJwt,async(req,res)=>{
     let prof2=await Interest.find({Receiver:userId});
     prof2.map((data)=>interest.push(data.Sender))
     prof.map((data)=>interest.push(data.Receiver));
-    console.log(interest)
-allUsers = allUsers.filter(item1 => !interest.some(item2 => item2.equals(item1)));
+    allUsers = allUsers.filter(item1 => !interest.some(item2 => item2.equals(item1)));
     let profile=await Profile.find({ 
         userId: { $in: allUsers }
      }).populate("userId","-Password").then((profiles)=>{
@@ -293,48 +300,67 @@ router.put('/confirm_match/:id',verifyJwt,async(req,res)=>{
         res.status(500).json({error:"Internal Server ERROR"})
     }
 });
-router.get('/my_match',verifyJwt,async(req,res)=>{
+router.get('/my_match', verifyJwt, async (req, res) => {
     try {
-        const allMatchIds=[]
-        const allMatchIds2=[]
-        const allMatchProfiles=[]
-        let myMatch=await Interest.find({Receiver:req.data.user.id,bothInterested:true}).populate("Sender","-Password");
-        let myMatch2=await Interest.find({Sender:req.data.user.id,bothInterested:true}).populate("Receiver","-Password");
-            if(!myMatch2.length===0&&!myMatch===0){
-                return res.status(404).json({msg:"No Match Found"});
+        // Initialize arrays to store match IDs and profiles
+        const allMatchIds = [];
+        const allMatchIds2 = [];
+        const allMatchProfiles = [];
+
+        // Find interests where the user is the receiver and both are interested
+        const myMatch = await Interest.find({ Receiver: req.data.user.id, bothInterested: true })
+            .populate('Sender', '-Password');
+
+        // Find interests where the user is the sender and both are interested
+        const myMatch2 = await Interest.find({ Sender: req.data.user.id, bothInterested: true })
+            .populate('Receiver', '-Password');
+
+        // Check if both myMatch and myMatch2 are empty
+        if (myMatch2.length === 0 && myMatch.length === 0) {
+            return res.status(404).json({ msg: 'No Match Found' });
+        }
+
+        // If myMatch is not empty, collect Sender IDs
+        if (myMatch.length !== 0) {
+            myMatch.forEach(val => allMatchIds.push(val.Sender._id));
+        }
+            // If myMatch2 is not empty, collect Receiver IDs
+            if (myMatch2.length !== 0) {
+                myMatch2.forEach(val => allMatchIds2.push(val.Receiver._id));
             }
-        if(myMatch.length!==0){
-            myMatch.map(val=>allMatchIds.push(val.Sender._id));
-            let profile=await Profile.find({ 
-                userId: { $in: allMatchIds }
-             }).populate("userId","-Password").then((profiles)=>{
-                allMatchProfiles.push(profiles)
-            }).catch((err)=>{
-            console.log(err)
-            })   
-        }
-        if(myMatch2.length!==0){
+            const singleProfile = await Profile.findOne({ userId: allMatchIds2[0] }).populate({
+                path: 'userId',
+                select: '-Password'
+            });
             
-            myMatch2.map(val=>allMatchIds2.push(val.Receiver._id));
-            let profile=await Profile.find({ 
-                userId: { $in: allMatchIds2 }
-             }).populate("userId","-Password").then((profiles)=>{
-                allMatchProfiles.push(profiles)
-            }).catch((err)=>{
-                console.log(err)
-            })   
-            allMatchIds=[];
+        // Find profiles based on collected IDs
+        if (allMatchIds.length > 0) {
+            const profiles = await Profile.find({ userId: { $in: allMatchIds } }).populate('userId', '-Password');
+            allMatchProfiles.push(profiles);
         }
-    return res.status(200).json(allMatchProfiles);
-               
+
+        if (allMatchIds2.length > 0) {
+            const profiles2 = await Profile.find({ userId: { $in: allMatchIds2 } })
+            .populate({
+                path: 'userId',
+                select: '-Password'
+            }); 
+            allMatchProfiles.push(profiles2);
+        }
+       return res.status(200).json(allMatchProfiles);
+
     } catch (error) {
-        res.status(500).json({msg:"Internal Server Error"});
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 router.post('/logout',verifyJwt,async(req,res)=>{
     try {
         
         res.clearCookie('typeAdmin',{
+            path:'/'
+        })
+        res.clearCookie('icCompleted',{
             path:'/'
         })
        return res.status(200).clearCookie('Authorization',{
@@ -351,7 +377,7 @@ router.post("/MyProfile",verifyJwt,async(req,res)=>{
         let userId=req.data.user.id;
         let user = await User.findById(req.data.user.id).select("-Password");
         if(user.isCompleted){
-            let user1=await Profile.findOne({userId}).populate("userId","-Password");
+            let user1=await Profile.findOne({userId:userId}).populate("userId","-Password");
             return res.status(200).json(user1)
         }
         return res.status(403).json({error:"Please Complete Your Profile first"});

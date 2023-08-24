@@ -7,7 +7,6 @@ const Login = () => {
    const {loginAcc}=useContext(context)
     const [credential,setCredential]=useState({Email:"",Password:""})
         const onChange=(e)=>{
-        console.log(credential)
         setCredential({...credential,[e.target.name]:e.target.value})
     }
 const onSubmit =async(e)=>{
