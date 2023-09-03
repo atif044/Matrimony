@@ -17,6 +17,7 @@ import MyMatch from './Components/MyMatch';
 import AllUsersNp from './Components/admin/AllUsersNp';
 import UserProtected from './security/UserProtected';
 import AdminPtotected from './security/AdminProtected'
+import ToApprovedUsers from './Components/admin/ToApprovedUsers'
 function App() {
   return (
     <Router>
@@ -39,8 +40,8 @@ function App() {
             <Route exact path="/indPrDet" element={<FullProfile />} />
           </Route>
 
-          <Route exact path="/Stalkers" element={<MyFans />}>
-            <Route exact path="/Stalkers" element={<MyFans />} />
+          <Route exact path="/Requests" element={<MyFans />}>
+            <Route exact path="/Requests" element={<MyFans />} />
           </Route>
 
           <Route exact path="/My Match" element={<MyMatch />}>
@@ -50,6 +51,7 @@ function App() {
           <Route exact path="/Un Approved Users" element={<AdminPtotected/>} >
           <Route exact path="/Un Approved Users" element={<AllUsersNp />} />
           </Route>
+          <Route exact path='/toApprove' element={<ToApprovedUsers/>}/>
         </Routes>
       </State>
     </Router>

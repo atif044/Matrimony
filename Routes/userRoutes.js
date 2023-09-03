@@ -2,7 +2,6 @@ const express=require('express');
 const User=require('../Models/User');
 const bcrypt=require('bcrypt');
 const router=express.Router();
-const app=express();
 const generateAuth=require('../Utils/generateAuth')
 const verifyJwt = require('../Middleware/middleware');
 const Profile=require('../Models/profile')
@@ -47,9 +46,6 @@ router.post('/login',async(req,res)=>{
         if(!PWDCOMP)
         {
             return res.status(400).json({success:false,error:"Email or Password is Incorrect"});
-        }
-        if(user.isApproved===false){
-            return res.status(403).json({success:false,error:"You are not approved by admin till now PLease Wait"});
         }
         const {Name,DateofBirth,isCompleted,isAdmin}=user;
         const data = {
@@ -124,6 +120,7 @@ router.post('/profile',verifyJwt,async(req,res)=>{
             const created=await Profile.create(obj)
             if (created){
                 const user=await User.findByIdAndUpdate(userId,{isCompleted:true});
+                await user.save()
                return res.status(200).json({msg:"Successfuly Added the details"});
             }
         }
@@ -196,7 +193,6 @@ router.post('/upload_profile_pic',upload.single('image'),verifyJwt,async(req,res
     }
 
 })
-
 // ============================== Users Specific Images
 router.post('/my_img',verifyJwt,async(req,res)=>{
     let userId=req.data.user.id;
@@ -220,10 +216,13 @@ router.get('/all_profiles',verifyJwt,async(req,res)=>{
         return res.status(403).json({msg:"invalid action"});
     }
     if(!user.isCompleted){
-        return res.status(404).json({error:"Please Complete Your Profile First"})
+        return res.status(400).json({error:"Please Complete Your Profile First"})
+    }
+    if(!user.isApproved){
+        return res.status(400).json({error:"Your profile needs to be approved by admin. Please wait"})
     }
     let gender=user.Gender==="Male"?"Female":"Male"
-    const filteredData= await User.find({Gender:gender,isCompleted:true}).select("-Password");
+    const filteredData= await User.find({Gender:gender,isCompleted:true,isApproved:true}).select("-Password");
     let allUsers=[];
     let allUsersData=[];
     let interest=[]// if already expressed so we will not show profile again
@@ -240,7 +239,7 @@ router.get('/all_profiles',verifyJwt,async(req,res)=>{
      }).populate("userId","-Password").then((profiles)=>{
         allUsersData.push(profiles)
     }).catch((err)=>{throw err})
-     return res.json(allUsersData);
+     return res.json({success:true,allUsersData});
 });
 //================================== EXPRESS THE INTEREST
 router.post('/express/:id',verifyJwt,async(req,res)=>{

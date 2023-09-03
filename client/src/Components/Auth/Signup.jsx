@@ -15,9 +15,8 @@ const Signup = () => {
     }
   const onSubmit=async(e)=>{
     e.preventDefault();
+    try{
     let res=await signUp(credential.Name,credential.Email,credential.Password,credential.Gender,startDate);
-    console.log(res);
-    console.log("token::::::::",token)
     if(res.error){
       toast.error(res.error);
     }
@@ -27,6 +26,10 @@ const Signup = () => {
         duration:3000
       }) 
     }
+  }
+  catch(error){
+    toast.error("Server Down")
+  }
   }
   return (
     <>

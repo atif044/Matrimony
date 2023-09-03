@@ -1,10 +1,14 @@
-import React,{useState,useContext} from 'react'
-import {ImCross} from 'react-icons/im'
+import React,{useState,useContext,useEffect} from 'react';
+import {ImCross} from 'react-icons/im';
 import toast, { Toaster } from 'react-hot-toast';
-import context from '../Context/context'
+import { useLocation } from 'react-router-dom';
+import context from '../Context/context';
 const CompleteProfile = () => {  
   const [InterestArr,setInterestArr]=useState([]);
   const [HobbiesArr,setHobbiesArr]=useState([]);
+  const location=useLocation()
+  const { state: largeObject,
+  } = location;
   const [profile,setProfile]=useState({
   Interests:"",Hobbies:"",
   fatherStatus:"",motherStatus:"",
@@ -13,9 +17,9 @@ const CompleteProfile = () => {
   nationality:"",description:"",Siblings:undefined,
   height:"",bodyWeight:"",complexion:""
 });
+
   const OnChange=(e)=>{
-    setProfile({...profile,[e.target.name]:e.target.value})
-   
+    setProfile({...profile,[e.target.name]:e.target.value}) 
   }
   const arrManager=(setState,index)=>{
     setState(prevList => {
@@ -65,13 +69,38 @@ const onSubmit=async(e)=>{
   }
   
 }
+useEffect(() => {
+  console.log(largeObject)
+  if(largeObject!==undefined||largeObject!==null){
+    setProfile({
+      ...profile,
+      fatherStatus:largeObject.familyBackground.fatherStatus,
+      motherStatus:largeObject.familyBackground.motherStatus,
+      Siblings:largeObject.Siblings,
+      education:largeObject.education,
+      address:largeObject.location.address,
+      city:largeObject.location.city,
+      country:largeObject.location.country,
+      complexion:largeObject.complexion,
+      description:largeObject.description,
+      height:largeObject.height,
+      bodyWeight:largeObject.bodyWeight,
+      profession:largeObject.profession,
+      nationality:largeObject.nationality,
+      religon:largeObject.religon,
+    }
+    )
+    setInterestArr(largeObject.Interests)
+    setHobbiesArr(largeObject.Hobbies)
+  }
+}, [])
   return (
     <>   
      <div>
       <Toaster/>
     </div>
     <form className='mx-16 mt-16' onSubmit={onSubmit}>
-  <div className="relative z-0 w-full mb-6 group">
+  <div className="relative w-full mb-6 group">
   <div className='flex'>
     <input
       type="text"

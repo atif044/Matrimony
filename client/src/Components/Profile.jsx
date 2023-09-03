@@ -2,15 +2,17 @@ import React,{useContext, useEffect,useRef,useState} from 'react';
 import  {toast, Toaster } from 'react-hot-toast';
 import "../CSS/Custom.css"
 import context from '../Context/context'
-import { NavLink } from 'react-router-dom';
+import { useNavigate,NavLink } from 'react-router-dom';
 import {Puff} from 'react-loader-spinner';
 import Utils from './Utils';
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from 'react-icons/bs'
 const Profile = () => {
+    const navigate=useNavigate()
     const {myProfile,profile,photoUpdate,profilePic}=useContext(context)
     const [loading, setLoading] = useState(true);
     const ScrollRef=useRef();
     const [dp,setDp]=useState("");
+    const [imagePreview,setImagePreview]=useState({raw:"",preview:""})
     const clickRef=useRef();
     const [photos,setPhotos]=useState([]);
     const handleScroll = (direction) => {
@@ -58,7 +60,18 @@ const Profile = () => {
             toast.success(res.msg)
         }
      setDp("")
+     setImagePreview({ raw: "", preview: "" });
      await myProfile();
+    }
+    const handleFileChange = (e) => {
+        setDp(e.target.files[0]);
+        setImagePreview({raw:e.target.files[0],
+        preview:URL.createObjectURL(e.target.files[0])
+        })
+      };
+      const cancelPreview=()=>{
+        setDp("");
+        setImagePreview({ raw: "", preview: null });
     }
   return (
     <>
@@ -77,15 +90,18 @@ const Profile = () => {
             <div class="col-span-4 sm:col-span-3">
                 <div class="bg-white shadow rounded-lg p-6">
                     <div class="flex flex-col items-center">
-                        <img src={`${Utils.link}/${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>
+            {imagePreview.raw===""&&<img src={`${Utils.link}/${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>}
+            {imagePreview.raw!==""&&<img src={`${imagePreview.preview}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>}
                         <h1 class="text-xl font-bold">{profile?.profile?.userId?.Name}</h1>
                         <p class="text-gray-600">{profile?.profile?.profession}</p>
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">
-                            <NavLink to="/CompleteProfile" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Update Profile</NavLink>
                            {dp==="" ? <button type='button' onClick={()=>clickRef.current.click()} className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded">Change DP</button>:
+                           <div>
                            <button type='button' onClick={uploadProfilePic} className="bg-green-500 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded">Confirm</button>
+                           <button type='button' onClick={cancelPreview} className="bg-white hover:bg-gray-400 text-gray-700 py-2 px-4 rounded">Cancel</button>
+                           </div>
                            }
-                            <input ref={clickRef} type='file' className=" hidden bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded" onChange={(e)=>setDp(e.target.files[0])}/>
+                            <input ref={clickRef} type='file' className=" hidden bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded" onChange={handleFileChange}/>
 
                         </div>
                     </div>
@@ -111,9 +127,16 @@ const Profile = () => {
             </div>
             <div class="col-span-4 sm:col-span-9">
     <div class="bg-white shadow rounded-lg p-6">
+                            <div className='flex justify-between'>
                     <h2 class="text-xl font-bold mb-4">About Me</h2>
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" onClick={()=>{
+                        navigate("/CompleteProfile",{state:profile.profile});
+                    }}>Update Profile</button>
+                            </div>
+                            <div className='max-w-md mx-auto break-words md:max-w-2xl'>
                     <p class="text-gray-700">{profile?.profile?.description}
                     </p>
+                    </div>
                     
                     <div class="mb-4">
                         <div class="flex justify-evenly">

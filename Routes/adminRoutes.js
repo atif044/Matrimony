@@ -14,9 +14,14 @@ app.get('/all_np',verifyJwt,async(req,res)=>{
         if(admin.isAdmin===false){
             return res.status(403).json({msg:"You are UnAuthorized. You are not admin."})
         }
-        let user=await User.find({isApproved:false}).select('-Password');
-        if(user.length!==0){
-            return res.status(200).json(user)
+        let user=await User.find({isApproved:false,isCompleted:true}).select('-Password');
+        
+        ids=[]
+        user.map((val)=>ids.push(val._id))
+        const userProfile=await Profile.find({userId:{$in:ids}}).populate("userId","-Password")
+        console.log(userProfile)
+        if(userProfile.length!==0){
+            return res.status(200).json(userProfile)
         }
         return res.status(200).json({msg:"No User Found"})
 
@@ -37,7 +42,7 @@ app.post('/approve/:id',verifyJwt,async(req,res)=>{
         await user.updateOne({isApproved:true});
         let saved = await user.save()
         if(saved){
-            return res.status(200).json({msg:"User has been approved to login"});
+            return res.status(200).json({msg:"User has been approved"});
         }
     }
     return res.status(200).json({error:"This User is already approved"})

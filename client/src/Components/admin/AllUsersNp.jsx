@@ -18,9 +18,9 @@ const AllUsersNp = () => {
       return `${newDate.getDate()} ${months[newDate.getMonth()]}, ${newDate.getFullYear()}`
   }
   let fetchData= async()=>{
-    try {
-      
+    try { 
       let res=await allunApproved();
+      console.log(res)
       if(res.msg==="No User Found"){
         setAllProfiles([])
         setLoading(false);
@@ -38,8 +38,7 @@ const AllUsersNp = () => {
   }
   useEffect(() => {
     fetchData();
-
-  },[allProfile])
+  },[])
   return (
     <div>
     <Toaster/>
@@ -52,8 +51,10 @@ const AllUsersNp = () => {
           </div>
           :
         allProfile.length>0 ?allProfile.map((val,i)=>{
-                  return <div key={i} >
-              <UsersDispCard name={val.Name} setter={setAllProfiles} profilePic={val.profilePic} description={val.Gender} dob={dateConverter(val.DateofBirth)} id={val._id}/>
+                  return <div key={i} onClick={()=>{
+                    navigate('/toApprove',{state:val})
+                  }} >
+              <UsersDispCard name={val.userId.Name} setter={setAllProfiles} profilePic={val.userId.profilePic} description={val.Gender} dob={dateConverter(val.userId.DateofBirth)} id={val.userId.id}/>
             </div>
         }):
         <div className='flex justify-center items-center mt-5'>
