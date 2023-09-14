@@ -1,5 +1,5 @@
 import React,{useRef,useContext} from 'react'
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from 'react-icons/bs'
 import context from '../Context/context'
 import toast, { Toaster } from 'react-hot-toast';
@@ -8,6 +8,7 @@ import Utils from './Utils';
 const FullProfile = () => {
     const {expressInterest,confirmMatch}=useContext(context)
     const location = useLocation();
+    const navigate=useNavigate()
     const { state: largeObject,
     } = location;
     const ScrollRef=useRef()
@@ -66,7 +67,9 @@ const FullProfile = () => {
                     <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button> 
                         </div>:
                         (largeObject.match===false||undefined)||(largeObject.fan===true||undefined)?<button className="text-white py-2 px-4 uppercase rounded bg-green-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={confMatch}>Accept</button>:
-                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button>   
+                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={()=>{
+                    navigate('/messageUser',{state:largeObject.userId._id})
+                    }}>  Message</button>   
                     }
                 </div>
                   </div>

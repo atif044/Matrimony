@@ -9,6 +9,7 @@ const multer=require('multer')
 const path=require('path')
 const generateRandomString=require('../Utils/generateRandomString');
 const Interest=require('../Models/interest');
+const Message=require('../Models/message')
 //=============================== SIGNUP
 router.post('/signup',async (req,res)=>{
     try {
@@ -81,7 +82,7 @@ router.post('/login',async(req,res)=>{
             // secure:true,
             // sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
-        }).json({success:true,msg:"You are logged in",Details:{Name,Email,DateofBirth,isAdmin}});
+        }).json({success:true,msg:"You are logged in",Details:{id:user._id,Name,Email,DateofBirth,isAdmin}});
 })
 // ========================= CHANGE PASSWORD
 router.post('/changepwd',verifyJwt,async(req,res)=>{
@@ -383,5 +384,39 @@ router.post("/MyProfile",verifyJwt,async(req,res)=>{
     } catch (error) {
         return res.status(500).json({error:"Internal Server Error"});
     }
+})
+//==============================MESSAGING ROUTES
+router.post("/messaging",verifyJwt,async(req,res)=>{
+    const {sender,receiver,content}=req.body;
+    try {
+        const message=new Message({
+            content:content,
+            sender:sender,
+            receiver:receiver
+        })
+        await message.save();
+        res.status(200).json("Message Sent Successfully");
+    } catch (error) {
+        return res.status(500).json("Internal Server Error");
+    }
+})
+router.get("/allMessages/:sender/:receiver",async(req,res)=>{
+    try {
+        const { sender, receiver} = req.params;
+    
+        // Find all messages between the two users, sorted by timestamp
+        const messages = await Message.find({
+          $or: [
+            { sender: sender, receiver: receiver },
+            { sender: receiver, receiver: sender },
+          ],
+        }).sort({ timestamp: 1 });
+        console.log(messages)
+
+        res.status(200).json(messages);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
 })
 module.exports=router;

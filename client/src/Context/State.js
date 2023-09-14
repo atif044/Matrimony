@@ -182,9 +182,29 @@ const approveId=async(id)=>{
    const json= await response.json();
    return json;
 }
-
+const sendMessage=async(sender,receiver,content)=>{
+  let response=await fetch(`${Lhost}/api/auth/messaging`,{
+    method:"POST",
+    credentials:"include",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({sender,receiver,content})
+  }
+  )
+  const json =await response.json()
+  return json;
+}
+const AllMessage=async(sender,receiver)=>{
+  const response=await fetch(`${Lhost}/api/auth/allMessages/${sender}/${receiver}`,
+  {
+    method:"GET"
+  })
+  let json=await response.json();
+  return json;
+}
   return (
-        <context.Provider value={{token,typeAdmin,approveId,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles,allunApproved}}>
+        <context.Provider value={{token,typeAdmin,approveId,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles,allunApproved,AllMessage,sendMessage}}>
       {props.children}
     </context.Provider>
   )

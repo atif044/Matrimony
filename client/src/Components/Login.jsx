@@ -16,6 +16,7 @@ const onSubmit =async(e)=>{
       toast.error(data.error)
     }
     else if(data.success){
+      localStorage.setItem('sender',data.Details.id);
       if(data?.Details?.isAdmin===true){
         return navigate('/Un Approved Users')
       }
