@@ -46,6 +46,7 @@ const Signup = () => {
           <label className="block mb-2 font-extrabold" htmlFor="">Name</label>
           <input 
           name="Name"
+          required
           value={credential.Name}
           onChange={onChange}
           className="inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded" type="text" placeholder="Name"/>
@@ -54,6 +55,7 @@ const Signup = () => {
           <label className="block mb-2 font-extrabold" htmlFor="">Email</label>
           <input
           name="Email"
+          required
           value={credential.Email}
           onChange={onChange}
            className="inline-block w-full p-4 leading-6 text-lg font-extrabold placeholder-indigo-900 bg-white shadow border-2 border-indigo-900 rounded" type="email" placeholder="email"/>
@@ -61,6 +63,7 @@ const Signup = () => {
         <div className="mb-6">
           <label className="block mb-2 font-extrabold" htmlFor="">Password</label>
           <input
+          required
           name="Password"
           value={credential.Password}
           onChange={onChange}
