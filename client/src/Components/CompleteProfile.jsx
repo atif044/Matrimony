@@ -70,28 +70,27 @@ const onSubmit=async(e)=>{
   
 }
 useEffect(() => {
-  console.log(largeObject)
-  if(largeObject!==undefined||largeObject!==null){
+  if(largeObject!==null){
     setProfile({
       ...profile,
-      fatherStatus:largeObject.familyBackground.fatherStatus,
-      motherStatus:largeObject.familyBackground.motherStatus,
-      Siblings:largeObject.Siblings,
-      education:largeObject.education,
-      address:largeObject.location.address,
-      city:largeObject.location.city,
-      country:largeObject.location.country,
-      complexion:largeObject.complexion,
-      description:largeObject.description,
-      height:largeObject.height,
-      bodyWeight:largeObject.bodyWeight,
-      profession:largeObject.profession,
-      nationality:largeObject.nationality,
-      religon:largeObject.religon,
+      fatherStatus:largeObject?.familyBackground.fatherStatus,
+      motherStatus:largeObject?.familyBackground.motherStatus,
+      Siblings:largeObject?.Siblings,
+      education:largeObject?.education,
+      address:largeObject?.location.address,
+      city:largeObject?.location.city,
+      country:largeObject?.location.country,
+      complexion:largeObject?.complexion,
+      description:largeObject?.description,
+      height:largeObject?.height,
+      bodyWeight:largeObject?.bodyWeight,
+      profession:largeObject?.profession,
+      nationality:largeObject?.nationality,
+      religon:largeObject?.religon,
     }
     )
-    setInterestArr(largeObject.Interests)
-    setHobbiesArr(largeObject.Hobbies)
+    setInterestArr(largeObject?.Interests)
+    setHobbiesArr(largeObject?.Hobbies)
   }
 }, [])
   return (
