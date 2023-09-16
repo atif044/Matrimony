@@ -1,6 +1,7 @@
 const express=require('express');
 const User=require('../Models/User');
 const bcrypt=require('bcrypt');
+const fs=require('fs')
 const router=express.Router();
 const generateAuth=require('../Utils/generateAuth')
 const verifyJwt = require('../Middleware/middleware');
@@ -10,6 +11,9 @@ const path=require('path')
 const generateRandomString=require('../Utils/generateRandomString');
 const Interest=require('../Models/interest');
 const Message=require('../Models/message')
+const axios=require('axios')
+const FormData=require('form-data')
+const{uploadToCloudinary}=require('../Utils/imageUpload')
 //=============================== SIGNUP
 router.post('/signup',async (req,res)=>{
     try {
@@ -139,23 +143,26 @@ router.post('/profile',verifyJwt,async(req,res)=>{
 })
 //=============== Users Photos Upload=====================
 const fullPath=path.join(process.env.FULLPATH,"/Matrimony/public/Photos");
-const storage=multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, fullPath);
-    },
-    filename: function (req, file, cb) {
-        let d=new Date()
-      const uniqueSuffix =`${generateRandomString(10)}-${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
-      const fileExtension = path.extname(file.originalname);
-      cb(null, file.fieldname + '-' + uniqueSuffix +fileExtension.toLowerCase());
-    },
-})
+const storage = multer.memoryStorage(); // Store uploaded image in memory
+// const storage=multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, fullPath);
+//     },
+//     filename: function (req, file, cb) {
+//         let d=new Date()
+//       const uniqueSuffix =`${generateRandomString(10)}-${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+//       const fileExtension = path.extname(file.originalname);
+//       cb(null, file.fieldname + '-' + uniqueSuffix +fileExtension.toLowerCase());
+//     },
+// })
 const upload = multer({ storage: storage });
 router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
-    let photos=[];
-    req.files.map((obj)=>{
-        photos.push(`${obj.filename}`)
-    })
+    const allImages=[]
+    let imgName=''
+    for(const file of req.files){
+      imgName = await uploadToCloudinary(file.buffer)
+      allImages.push(imgName)
+    }     
     const user=await User.findById(req.data.user.id);
      if(!user){
         return res.status(404).json({msg:"Invalid Action"})
@@ -164,7 +171,7 @@ router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
         const userId=req.data.user.id;
         const profile= await Profile.findOne({userId});
         if(!profile){
-               const created=await Profile.create({userId,photos})
+               const created=await Profile.create({userId,photos:allImages})
             if (created){
                 res.status(200).json({msg:"Images Uploaded Successfully"});
             }
@@ -172,7 +179,7 @@ router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
         else
         {
             let profile=await Profile.findOne({userId});
-             photos= await profile.updateOne({photos:profile.photos.concat(photos)})
+             photos= await profile.updateOne({photos:profile.photos.concat(allImages)})
             let saved=await profile.save()
             if(saved){
                 res.status(200).json({msg:"Images Uploaded Successfully"})
@@ -184,12 +191,22 @@ router.post('/upload_img',verifyJwt,upload.array('images',8),async(req,res)=>{
 //========================================Profile Picture
 router.post('/upload_profile_pic',upload.single('image'),verifyJwt,async(req,res)=>{
     try {
-        const user=await User.findByIdAndUpdate(req.data.user.id,{profilePic:req.file.filename});
-        if(user){
-            return res.status(200).json({msg:"Profile Picture Updated"});
-        }
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+          }
+        let imageUrl=await uploadToCloudinary(req.file.buffer)
+          if(imageUrl){
+            const user=await User.findByIdAndUpdate(req.data.user.id,
+                {profilePic:imageUrl});
+    
+                if(user){
+                    return res.status(200).json({msg:"Profile Picture Updated"});
+                }
+          }
+       
         return res.status(400).json({error:"Error Uploading Profile Pic"})
     } catch (error) {
+        console.log(error)
         res.status(500).json({error:"Internal Server Error"});
     }
 

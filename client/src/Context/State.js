@@ -1,5 +1,6 @@
 import context from "./context";
 import Cookies from 'js-cookie';
+import {link} from '../Components/Utils'
 import { useState,useEffect} from "react";
 const NoteState = (props) => {
     const[token,setToken]=useState(Cookies.get("Authorization"));
@@ -9,7 +10,7 @@ const NoteState = (props) => {
   
     }, [token])
 
-  const Lhost = "http://localhost:5000" 
+  const Lhost = link
    function formatDateToMMDDYYYY(longDate) {
     const date = new Date(longDate);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

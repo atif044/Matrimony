@@ -1,1 +1,1 @@
-module.exports={link:'http://localhost:5000'}
+module.exports={link:'http://13.115.151.154:1025'}

@@ -54,9 +54,9 @@ const FullProfile = () => {
             <div className="grid grid-cols-1 md:grid-cols-3">
                 <div className="relative">
                     <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                        <img src={`${Utils.link}/${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}>
+                        <img src={`${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}/>
 
-                        </img>
+                        
                     </div>
                 </div>
                 <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
@@ -67,9 +67,7 @@ const FullProfile = () => {
                     <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button> 
                         </div>:
                         (largeObject.match===false||undefined)||(largeObject.fan===true||undefined)?<button className="text-white py-2 px-4 uppercase rounded bg-green-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={confMatch}>Accept</button>:
-                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={()=>{
-                    navigate('/messageUser',{state:largeObject.userId._id})
-                    }}>  Message</button>   
+                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button>   
                     }
                 </div>
                   </div>
@@ -164,7 +162,7 @@ const FullProfile = () => {
             <h2 className="text-xl font-bold mb-4">Images</h2>
             <div ref={ScrollRef} className='flex overflow-auto mb-4 hero'>
                        { largeObject.photos?.map((img,i)=>{
-                            return <img key={i} alt={`gallery-${i}`} src={`http://localhost:5000/${img}`} className="w-auto max-h-96 object-contain mr-5"/>
+                            return <img key={i} alt={`gallery-${i}`} src={`${Utils.link}/${img}`} className="w-auto max-h-96 object-contain mr-5"/>
                         })
                         }
                         <div onClick={() => handleScroll("left")} style={{ display: "flex", cursor: "pointer", position: "absolute",marginLeft:'-20px', alignSelf: "center",  }}>

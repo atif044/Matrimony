@@ -90,7 +90,7 @@ const Profile = () => {
             <div class="col-span-4 sm:col-span-3">
                 <div class="bg-white shadow rounded-lg p-6">
                     <div class="flex flex-col items-center">
-            {imagePreview.raw===""&&<img src={`${Utils.link}/${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>}
+            {imagePreview.raw===""&&<img src={`${profile?.profile?.userId?.profilePic}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>}
             {imagePreview.raw!==""&&<img src={`${imagePreview.preview}`} alt={"Profile"} class="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"/>}
                         <h1 class="text-xl font-bold">{profile?.profile?.userId?.Name}</h1>
                         <p class="text-gray-600">{profile?.profile?.profession}</p>
@@ -212,7 +212,7 @@ const Profile = () => {
                     </div> 
                         <div ref={ScrollRef} className='flex overflow-auto mb-4 hero'>
                        { profile?.profile?.photos?.map((img,i)=>{
-                            return <img key={i} alt={`gallery-${i}`} src={`http://localhost:5000/${img}`} class="w-auto max-h-96 object-contain mr-5"/>
+                            return <img key={i} alt={`gallery-${i}`} src={`${img}`} class="w-auto max-h-96 object-contain mr-5"/>
                         })
                         }
                         <div onClick={() => handleScroll("left")} style={{ display: "flex", cursor: "pointer", position: "absolute",marginLeft:'-20px', alignSelf: "center",  }}>
