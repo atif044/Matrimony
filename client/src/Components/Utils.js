@@ -1,1 +1,1 @@
-module.exports={link:'http://13.115.151.154:1025'}
+module.exports={link:'http://18.181.172.169:1025'}

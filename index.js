@@ -9,7 +9,7 @@ const auth=require('./Routes/userRoutes')
 const adminAuth=require('./Routes/adminRoutes')
 const socketIo=require('socket.io');
 app.use(express.json());
-app.use(cors({ origin: 'http://13.115.151.154:1026', credentials: true }))
+app.use(cors({ origin: 'http://18.181.172.169:1026', credentials: true }))
 app.options('*',cors())
 app.use(cookieParser())
 app.listen(process.env.PORT)
