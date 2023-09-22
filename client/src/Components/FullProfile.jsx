@@ -162,7 +162,7 @@ const FullProfile = () => {
             <h2 className="text-xl font-bold mb-4">Images</h2>
             <div ref={ScrollRef} className='flex overflow-auto mb-4 hero'>
                        { largeObject.photos?.map((img,i)=>{
-                            return <img key={i} alt={`gallery-${i}`} src={`${Utils.link}/${img}`} className="w-auto max-h-96 object-contain mr-5"/>
+                            return <img key={i} alt={`gallery-${i}`} src={`${img}`} className="w-auto max-h-96 object-contain mr-5"/>
                         })
                         }
                         <div onClick={() => handleScroll("left")} style={{ display: "flex", cursor: "pointer", position: "absolute",marginLeft:'-20px', alignSelf: "center",  }}>
