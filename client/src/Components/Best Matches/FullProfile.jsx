@@ -1,18 +1,20 @@
 import React,{useRef,useContext} from 'react'
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from 'react-icons/bs'
 import context from '../../Context/context'
 import toast, { Toaster } from 'react-hot-toast';
-import Utils from '../Utils';
-const FullProfile = () => {
+
+const FullProfile2 = () => {
+    const {expressInterest}=useContext(context)
     const location = useLocation();
-    const {approveId}=useContext(context);
+    const navigate=useNavigate()
     const { state: largeObject,
     } = location;
     const ScrollRef=useRef()
     const handleScroll = (direction) => {
         const { current } = ScrollRef;
         const scrollAmount = 154
+    
         if (direction === "left") {
           current.scrollLeft -= scrollAmount;
         }
@@ -20,30 +22,35 @@ const FullProfile = () => {
           current.scrollLeft += scrollAmount;
         }
       }
-      const ApproveId=async(id)=>{
-            let res=await approveId(id);
-            if(res?.msg){
-                return toast.success(res.msg)
+      const expressInterests=async()=>{
+            let res=await expressInterest(largeObject.userId._id)
+            if(res?.error){
+                return toast.error(res.error);
             }
-            return toast.error(res.error)
+            else if(res?.msg){
+                return toast.success(res.msg);
+            }
       }
-    return (        
+    return (
         <div className="p-16">
         <div><Toaster reverseOrder={true}/></div>
         <div className="p-8 bg-white shadow mt-24">
             <div className="grid grid-cols-1 md:grid-cols-3">
                 <div className="relative">
                     <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                        <img src={`${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}>
-                        </img>
+                        <img src={`${largeObject.userId.profilePic}`} className="w-48 h-48 bg-gray-300 rounded-full mb-4 shrink-0" alt={"ksnkjfnkj"}/>
+
+                        
                     </div>
                 </div>
                 <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
-                
-                    <button className="text-white py-2 px-4 uppercase rounded bg-green-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
-                    onClick={()=>ApproveId(largeObject.userId._id)}
-                    >Approve</button>
-                   
+                    
+                     
+                       <div>
+                    <button className="text-white py-2 px-4 uppercase rounded bg-green-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" onClick={expressInterests}>  Connect</button>
+                    <button className="text-white py-2 px-4 uppercase rounded bg-cyan-300 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5" disabled>  Message</button> 
+                        </div>
+                        
                 </div>
                   </div>
             <div className="mt-20 text-center border-b pb-12">
@@ -53,7 +60,7 @@ const FullProfile = () => {
                 <p className="mt-8 text-gray-500">{largeObject.profession}</p>
                 <p className="mt-2 text-gray-500">{largeObject.education}</p>
             </div>
-            <div className="max-w-md mx-auto break-words md:max-w-2xl">
+            <div className="mt-12 flex flex-col justify-center">
                 <p className="text-gray-600 text-center font-light lg:px-16">{largeObject.description}</p>
             </div>
             <div className="mb-4">
@@ -153,4 +160,4 @@ const FullProfile = () => {
         </div>
     )
 }
-export default FullProfile
+export default FullProfile2

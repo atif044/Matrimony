@@ -204,8 +204,18 @@ const AllMessage=async(sender,receiver)=>{
   let json=await response.json();
   return json;
 }
+
+
+const bestMatches=async()=>{
+  const response=await fetch(`${Lhost}/api/auth/best_matches`,{
+    method:"GET",
+    credentials:"include"
+  })
+  let json =await response.json();
+  return json;
+}
   return (
-        <context.Provider value={{token,typeAdmin,approveId,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles,allunApproved,AllMessage,sendMessage}}>
+        <context.Provider value={{token,typeAdmin,bestMatches,approveId,myMatch,confirmMatch,myAllFans,expressInterest,photoUpdate,profilePic,loginAcc,signUp,logOut,myProfile,detailUpdate,profile,allProfiles,allunApproved,AllMessage,sendMessage}}>
       {props.children}
     </context.Provider>
   )

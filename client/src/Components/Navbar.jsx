@@ -19,8 +19,8 @@ const Navbar = () => {
         toast.error("Srever Down")
     }
     }
-    let elements2=token?["All Profiles","My Match","Requests","My Profile"]:["Login","Sign up"]
-    let elements=typeAdmin==="true"?["Un Approved Users","All Profiles","My Match","Requests","My Profile"]:elements2
+    let elements2=token?["All Profiles",'Best Matches',"My Match","Requests","My Profile"]:["Login","Sign up"]
+    let elements=typeAdmin==="true"?["Un Approved Users",'Best Matches',"All Profiles","My Match","Requests","My Profile"]:elements2
     return (
     <nav className="w-full  bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow">
         <div><Toaster reverseOrder={true}/></div>

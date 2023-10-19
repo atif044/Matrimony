@@ -1,1 +1,2 @@
-module.exports={link:'http://18.183.82.132:1025'}
+const link=process.env.LINK||"http://localhost:5000"
+module.exports={link:link}

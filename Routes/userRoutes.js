@@ -436,4 +436,48 @@ router.get("/allMessages/:sender/:receiver",async(req,res)=>{
         res.status(500).json({ error: 'Internal server error' });
       }
 })
+router.get('/best_matches',verifyJwt,async(req,res)=>{
+    const userId=req.data.user.id;
+    const user=await User.findById(userId).select("-Password");
+    if(!user)
+    {
+        return res.status(403).json({msg:"invalid action"});
+    }
+    if(!user.isCompleted){
+        return res.status(400).json({error:"Please Complete Your Profile First"})
+    }
+    if(!user.isApproved){
+        return res.status(400).json({error:"Your profile needs to be approved by admin. Please wait"})
+    }
+
+    let gender=user.Gender==="Male"?"Female":"Male"
+    let userProfile=await Profile.findOne({userId:user._id});
+    console.log(userProfile.Interests)
+    console.log(userProfile.Hobbies)
+    const filteredData= await User.find({Gender:gender,isCompleted:true,isApproved:true
+    }).select("-Password");
+    let allUsers=[];
+    let allUsersData=[];
+    let interest=[]// if already expressed so we will not show profile again
+    filteredData.map((data)=>{
+        allUsers.push(data._id)
+    })
+
+    // if already expressed following code is for not showing that id again
+    let prof=await Interest.find({Sender:userId,Receiver:{$in:allUsers}});
+    let prof2=await Interest.find({Receiver:userId});
+    prof2.map((data)=>interest.push(data.Sender))
+    prof.map((data)=>interest.push(data.Receiver));
+    allUsers = allUsers.filter(item1 => !interest.some(item2 => item2.equals(item1)));
+    let profile=await Profile.find({ 
+        userId: { $in: allUsers },
+        $or:[
+            { Hobbies: { $in: userProfile.Hobbies } },
+        { Interests: { $in: userProfile.Interests } }
+        ]
+     }).populate("userId","-Password").then((profiles)=>{
+        allUsersData.push(profiles)
+    }).catch((err)=>{throw err})
+     return res.json({success:true,allUsersData});
+})
 module.exports=router;
