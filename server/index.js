@@ -7,7 +7,6 @@ const express=require('express');
 const app=express();
 const auth=require('./Routes/userRoutes')
 const adminAuth=require('./Routes/adminRoutes')
-const socketIo=require('socket.io');
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
 app.options('*',cors())
