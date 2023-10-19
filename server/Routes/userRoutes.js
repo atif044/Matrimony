@@ -69,14 +69,14 @@ router.post('/login',async(req,res)=>{
         res.cookie("icCompleted",isCompleted,{
              domain:'.vercel.app',
             sameSite: 'none', // Adjust as needed
-        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        secure: false, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             maxAge:24 * 60 * 60 * 1000,
         })
         res.cookie("typeAdmin",isAdmin,{
             domain:'.vercel.app',
             sameSite: 'none', // Adjust as needed
-        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        secure: false, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
@@ -85,7 +85,7 @@ router.post('/login',async(req,res)=>{
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
              domain:'.vercel.app',
             sameSite: 'none', // Adjust as needed
-        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        secure: false, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
