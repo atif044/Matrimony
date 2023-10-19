@@ -67,14 +67,16 @@ router.post('/login',async(req,res)=>{
 
         
         res.cookie("icCompleted",isCompleted,{
-            secure:false,
+            secure:true,
+            httpOnly:true,
             maxAge:24 * 60 * 60 * 1000,
             // secure:true,
             // sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         })
         res.cookie("typeAdmin",isAdmin,{
-            secure:false,
+            secure:true,
+            httpOnly:true,
             maxAge:24 * 60 * 60 * 1000,
             // secure:true,
             // sameSite:'none',
@@ -82,7 +84,8 @@ router.post('/login',async(req,res)=>{
         })
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
             
-            secure:false,
+            secure:true,
+            httpOnly:true,
             maxAge:24 * 60 * 60 * 1000,
             // secure:true,
             // sameSite:'none',
