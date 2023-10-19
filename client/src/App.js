@@ -19,7 +19,6 @@ import AllUsersNp from './Components/admin/AllUsersNp';
 import UserProtected from './security/UserProtected';
 import AdminPtotected from './security/AdminProtected'
 import ToApprovedUsers from './Components/admin/ToApprovedUsers'
-import Messaging from './Components/Messaging'
 import MyBestMatches from './Components/Best Matches/MyBestMatches'
 function App() {
   return (
@@ -61,7 +60,6 @@ function App() {
           <Route exact path="/Un Approved Users" element={<AllUsersNp />} />
           </Route>
           <Route exact path='/toApprove' element={<ToApprovedUsers/>}/>
-          <Route exact path='/messageUser' element={<Messaging/>}/>
 
         </Routes>
       </State>
