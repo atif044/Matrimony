@@ -67,30 +67,27 @@ router.post('/login',async(req,res)=>{
 
         
         res.cookie("icCompleted",isCompleted,{
-            sameSite: 'Lax', // Adjust as needed
+            sameSite: 'none', // Adjust as needed
         secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             maxAge:24 * 60 * 60 * 1000,
-            expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         })
         res.cookie("typeAdmin",isAdmin,{
-            sameSite: 'Lax', // Adjust as needed
+            sameSite: 'none', // Adjust as needed
         secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
             
-            expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         })
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
             
-            sameSite: 'Lax', // Adjust as needed
+            sameSite: 'none', // Adjust as needed
         secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
         httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
         
-            expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         }).json({success:true,msg:"You are logged in",Details:{id:user._id,Name,Email,DateofBirth,isAdmin}});
 })
 // ========================= CHANGE PASSWORD
