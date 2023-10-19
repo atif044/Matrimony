@@ -8,7 +8,7 @@ const app=express();
 const auth=require('./Routes/userRoutes')
 const adminAuth=require('./Routes/adminRoutes')
 app.use(express.json());
-app.use(cors({ origin: 'https://matrimony-nu.vercel.app', credentials: true }))
+app.use(cors({ origin: 'https://atif044.github.io', credentials: true }))
 app.options('*',cors())
 app.use(cookieParser())
 app.listen(5000)
