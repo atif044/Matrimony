@@ -67,27 +67,29 @@ router.post('/login',async(req,res)=>{
 
         
         res.cookie("icCompleted",isCompleted,{
-            secure:true,
+            sameSite: 'Lax', // Adjust as needed
+        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        httpOnly: true,
             maxAge:24 * 60 * 60 * 1000,
-            // secure:true,
-             sameSite:'none',
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         })
         res.cookie("typeAdmin",isAdmin,{
-            secure:true,
+            sameSite: 'Lax', // Adjust as needed
+        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
-            // secure:true,
-            sameSite:'none',
+            
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         })
         return res.status(200).cookie("Authorization",`Bearer ${authToken}`,{
             
-            secure:true,
+            sameSite: 'Lax', // Adjust as needed
+        secure: true, // Use 'true' for HTTPS, 'false' for development (HTTP)
+        httpOnly: true,
             
             maxAge:24 * 60 * 60 * 1000,
-            // secure:true,
-            sameSite:'none',
+        
             expires:new Date(Date.now()+24 * 60 * 60 * 1000)
         }).json({success:true,msg:"You are logged in",Details:{id:user._id,Name,Email,DateofBirth,isAdmin}});
 })
