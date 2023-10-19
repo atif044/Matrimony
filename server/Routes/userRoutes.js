@@ -142,7 +142,6 @@ router.post('/profile',verifyJwt,async(req,res)=>{
      }
 })
 //=============== Users Photos Upload=====================
-const fullPath=path.join(process.env.FULLPATH,"/Matrimony/public/Photos");
 const storage = multer.memoryStorage(); // Store uploaded image in memory
 // const storage=multer.diskStorage({
 //     destination: function (req, file, cb) {
