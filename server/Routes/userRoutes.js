@@ -6,6 +6,7 @@ const router=express.Router();
 const generateAuth=require('../Utils/generateAuth')
 const verifyJwt = require('../Middleware/middleware');
 const Profile=require('../Models/profile')
+require('dotenv').config()
 const multer=require('multer')
 const path=require('path')
 const generateRandomString=require('../Utils/generateRandomString');
