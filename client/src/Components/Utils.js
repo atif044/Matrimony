@@ -1,2 +1,2 @@
-const link=process.env.LINK||"http://localhost:5000"
+const link="https://mb-five.vercel.app"
 module.exports={link:link}
