@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors({ origin: 'https://matrimony-nu.vercel.app', credentials: true }))
 app.options('*',cors())
 app.use(cookieParser())
-app.listen(process.env.PORT)
+app.listen(process.env.PORT||5000)
 
 db();
 app.use('/api/auth', auth);
